@@ -1,9 +1,43 @@
 package bunq
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
+
+// FlexFloat64 is a float64 that can be unmarshaled from both JSON numbers and strings.
+// The bunq API returns some numeric fields (e.g. savings_goal_progress) as strings.
+// See: json: cannot unmarshal string into Go struct field MonetaryAccountSavings.savings_goal_progress of type float64
+type FlexFloat64 float64
+
+func (f *FlexFloat64) UnmarshalJSON(data []byte) error {
+	if string(data) == "null" {
+		return nil
+	}
+	// Try number first
+	var n float64
+	if err := json.Unmarshal(data, &n); err == nil {
+		*f = FlexFloat64(n)
+		return nil
+	}
+	// Try string
+	var s string
+	if err := json.Unmarshal(data, &s); err != nil {
+		return fmt.Errorf("FlexFloat64: cannot unmarshal %s", data)
+	}
+	n, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return fmt.Errorf("FlexFloat64: cannot parse %q: %w", s, err)
+	}
+	*f = FlexFloat64(n)
+	return nil
+}
+
+func (f FlexFloat64) MarshalJSON() ([]byte, error) {
+	return json.Marshal(float64(f))
+}
 
 // Environment represents a bunq API environment (production or sandbox).
 type Environment struct {

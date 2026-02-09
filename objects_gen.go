@@ -24,8 +24,8 @@ type InvoiceItem struct {
 	TypeDescriptionTranslated string `json:"type_description_translated,omitempty"`
 	UnitVATExclusive *Amount `json:"unit_vat_exclusive,omitempty"`
 	UnitVATInclusive *Amount `json:"unit_vat_inclusive,omitempty"`
-	VAT float64 `json:"vat,omitempty"`
-	Quantity float64 `json:"quantity,omitempty"`
+	VAT FlexFloat64 `json:"vat,omitempty"`
+	Quantity FlexFloat64 `json:"quantity,omitempty"`
 	TotalVATExclusive *Amount `json:"total_vat_exclusive,omitempty"`
 	TotalVATInclusive *Amount `json:"total_vat_inclusive,omitempty"`
 }

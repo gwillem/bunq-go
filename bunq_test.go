@@ -105,6 +105,74 @@ func TestListOptions(t *testing.T) {
 	}
 }
 
+func TestFlexFloat64_UnmarshalJSON(t *testing.T) {
+	tests := []struct {
+		name    string
+		input   string
+		want    float64
+		wantErr bool
+	}{
+		{"string value", `{"v":"75.50"}`, 75.50, false},
+		{"number value", `{"v":75.50}`, 75.50, false},
+		{"zero string", `{"v":"0"}`, 0, false},
+		{"zero number", `{"v":0}`, 0, false},
+		{"integer string", `{"v":"100"}`, 100, false},
+		{"negative string", `{"v":"-3.14"}`, -3.14, false},
+		{"empty string", `{"v":""}`, 0, true},
+		{"null value", `{"v":null}`, 0, false},
+		{"absent field", `{}`, 0, false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var s struct {
+				V FlexFloat64 `json:"v"`
+			}
+			err := json.Unmarshal([]byte(tt.input), &s)
+			if tt.wantErr {
+				if err == nil {
+					t.Fatal("expected error, got nil")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if float64(s.V) != tt.want {
+				t.Errorf("got %v, want %v", s.V, tt.want)
+			}
+		})
+	}
+}
+
+func TestFlexFloat64_MarshalJSON(t *testing.T) {
+	s := struct {
+		V FlexFloat64 `json:"v"`
+	}{V: 42.5}
+	b, err := json.Marshal(s)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	if string(b) != `{"v":42.5}` {
+		t.Errorf("got %s, want %s", b, `{"v":42.5}`)
+	}
+}
+
+func TestUnmarshalList_SavingsGoalProgress(t *testing.T) {
+	// Reproduces the real bug: API returns savings_goal_progress as a string
+	body := `{"Response":[{"MonetaryAccountSavings":{"id":123,"savings_goal_progress":"75.50"}}],"Pagination":{}}`
+	resp, err := unmarshalList[MonetaryAccountSavings]([]byte(body), "MonetaryAccountSavings")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(resp.Items) != 1 {
+		t.Fatalf("expected 1 item, got %d", len(resp.Items))
+	}
+	if float64(resp.Items[0].SavingsGoalProgress) != 75.50 {
+		t.Errorf("expected 75.50, got %v", resp.Items[0].SavingsGoalProgress)
+	}
+}
+
 func TestAmountMarshal(t *testing.T) {
 	a := Amount{Value: "10.00", Currency: "EUR"}
 	b, err := json.Marshal(a)

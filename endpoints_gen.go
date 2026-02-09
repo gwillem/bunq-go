@@ -1632,7 +1632,7 @@ type MonetaryAccountExternalSavings struct {
 	AllAutoSaveID []*BunqId `json:"all_auto_save_id,omitempty"`
 	Fulfillments []*Fulfillment `json:"fulfillments,omitempty"`
 	SavingsGoal *Amount `json:"savings_goal,omitempty"`
-	SavingsGoalProgress float64 `json:"savings_goal_progress,omitempty"`
+	SavingsGoalProgress FlexFloat64 `json:"savings_goal_progress,omitempty"`
 	NumberOfPaymentRemaining string `json:"number_of_payment_remaining,omitempty"`
 	Budget []*MonetaryAccountBudget `json:"budget,omitempty"`
 	AllCoOwner []*CoOwner `json:"all_co_owner,omitempty"`
@@ -1816,7 +1816,7 @@ type MonetaryAccountSavings struct {
 	MonetaryAccountProfile *MonetaryAccountProfile `json:"monetary_account_profile,omitempty"`
 	Setting *MonetaryAccountSetting `json:"setting,omitempty"`
 	SavingsGoal *Amount `json:"savings_goal,omitempty"`
-	SavingsGoalProgress float64 `json:"savings_goal_progress,omitempty"`
+	SavingsGoalProgress FlexFloat64 `json:"savings_goal_progress,omitempty"`
 	NumberOfPaymentRemaining string `json:"number_of_payment_remaining,omitempty"`
 	AllAutoSaveID []*BunqId `json:"all_auto_save_id,omitempty"`
 	Fulfillments []*Fulfillment `json:"fulfillments,omitempty"`
@@ -2854,7 +2854,7 @@ type PaymentAutoAllocateDefinition struct {
 	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	Amount *Amount `json:"amount,omitempty"`
-	Fraction float64 `json:"fraction,omitempty"`
+	Fraction FlexFloat64 `json:"fraction,omitempty"`
 }
 
 type PaymentAutoAllocate struct {
@@ -3102,8 +3102,8 @@ type TransferwiseUserCreateParams struct {
 }
 
 type TreeProgress struct {
-	NumberOfTree float64 `json:"number_of_tree,omitempty"`
-	ProgressTreeNext float64 `json:"progress_tree_next,omitempty"`
+	NumberOfTree FlexFloat64 `json:"number_of_tree,omitempty"`
+	ProgressTreeNext FlexFloat64 `json:"progress_tree_next,omitempty"`
 	URLInviteProfile string `json:"url_invite_profile,omitempty"`
 	LabelUser *LabelUser `json:"label_user,omitempty"`
 }

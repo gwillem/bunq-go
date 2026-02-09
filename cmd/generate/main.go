@@ -445,7 +445,7 @@ func resolveFieldTypes(fields []pyField, registry map[string]bool) {
 }
 
 var primitiveTypes = map[string]bool{
-	"string": true, "int": true, "float64": true, "bool": true, "any": true,
+	"string": true, "int": true, "FlexFloat64": true, "bool": true, "any": true,
 }
 
 func resolveType(goType string, registry map[string]bool) string {
@@ -511,7 +511,7 @@ func pythonTypeToGo(pyType string, isRequest bool) string {
 	case "int":
 		return "int"
 	case "float":
-		return "float64"
+		return "FlexFloat64"
 	case "bool":
 		if isRequest {
 			return "*bool"
