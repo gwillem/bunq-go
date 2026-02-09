@@ -52,10 +52,7 @@ func TestIntegration(t *testing.T) {
 	t.Run("RequestMoney", func(t *testing.T) {
 		// Request money from the sandbox sugar daddy to fund the account
 		reqID, err := client.RequestInquiry.Create(ctx, 0, RequestInquiryCreateParams{
-			AmountInquired: &Amount{
-				Value:    "100.00",
-				Currency: "EUR",
-			},
+			AmountInquired: NewAmount(100, "EUR"),
 			CounterpartyAlias: &Pointer{
 				Type:  "EMAIL",
 				Value: "sugardaddy@bunq.com",
@@ -79,10 +76,7 @@ func TestIntegration(t *testing.T) {
 		var err error
 		for range 3 {
 			paymentID, err = client.Payment.Create(ctx, 0, PaymentCreateParams{
-				Amount: &Amount{
-					Value:    "0.01",
-					Currency: "EUR",
-				},
+				Amount: NewAmount(0.01, "EUR"),
 				CounterpartyAlias: &Pointer{
 					Type:  "EMAIL",
 					Value: "sugardaddy@bunq.com",

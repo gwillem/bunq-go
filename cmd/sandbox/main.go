@@ -58,10 +58,7 @@ func main() {
 	// 4. Fund account via sugar daddy
 	fmt.Println("\n=== Requesting funds from sugar daddy ===")
 	reqID, err := client.RequestInquiry.Create(ctx, 0, bunq.RequestInquiryCreateParams{
-		AmountInquired: &bunq.Amount{
-			Value:    "500.00",
-			Currency: "EUR",
-		},
+		AmountInquired: bunq.NewAmount(500, "EUR"),
 		CounterpartyAlias: &bunq.Pointer{
 			Type:  "EMAIL",
 			Value: "sugardaddy@bunq.com",
@@ -94,10 +91,7 @@ func main() {
 	// 6. Create a payment
 	fmt.Println("\n=== Creating payment ===")
 	paymentID, err := client.Payment.Create(ctx, 0, bunq.PaymentCreateParams{
-		Amount: &bunq.Amount{
-			Value:    "12.50",
-			Currency: "EUR",
-		},
+		Amount: bunq.NewAmount(12.50, "EUR"),
 		CounterpartyAlias: &bunq.Pointer{
 			Type:  "EMAIL",
 			Value: "sugardaddy@bunq.com",

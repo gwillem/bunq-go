@@ -39,6 +39,21 @@ func (f FlexFloat64) MarshalJSON() ([]byte, error) {
 	return json.Marshal(float64(f))
 }
 
+// NewAmount creates an Amount from a float64 value and currency code.
+func NewAmount(value float64, currency string) *Amount {
+	return &Amount{
+		Value:    strconv.FormatFloat(value, 'f', 2, 64),
+		Currency: currency,
+	}
+}
+
+// Float64 returns the Amount's value as a float64.
+// Returns 0 if the value cannot be parsed.
+func (a *Amount) Float64() float64 {
+	n, _ := strconv.ParseFloat(a.Value, 64)
+	return n
+}
+
 // Environment represents a bunq API environment (production or sandbox).
 type Environment struct {
 	BaseURL string

@@ -185,6 +185,47 @@ func TestAmountMarshal(t *testing.T) {
 	}
 }
 
+func TestNewAmount(t *testing.T) {
+	a := NewAmount(10.50, "EUR")
+	if a.Value != "10.50" {
+		t.Errorf("expected 10.50, got %s", a.Value)
+	}
+	if a.Currency != "EUR" {
+		t.Errorf("expected EUR, got %s", a.Currency)
+	}
+
+	// Integer amount should not have unnecessary decimals
+	a = NewAmount(100, "USD")
+	if a.Value != "100.00" {
+		t.Errorf("expected 100.00, got %s", a.Value)
+	}
+
+	// Tiny fraction
+	a = NewAmount(0.01, "EUR")
+	if a.Value != "0.01" {
+		t.Errorf("expected 0.01, got %s", a.Value)
+	}
+}
+
+func TestAmountFloat64(t *testing.T) {
+	a := NewAmount(42.99, "EUR")
+	if a.Float64() != 42.99 {
+		t.Errorf("expected 42.99, got %f", a.Float64())
+	}
+
+	// From API response (string value)
+	a = &Amount{Value: "123.45", Currency: "EUR"}
+	if a.Float64() != 123.45 {
+		t.Errorf("expected 123.45, got %f", a.Float64())
+	}
+
+	// Invalid value returns 0
+	a = &Amount{Value: "not-a-number", Currency: "EUR"}
+	if a.Float64() != 0 {
+		t.Errorf("expected 0, got %f", a.Float64())
+	}
+}
+
 func TestSecuritySignVerify(t *testing.T) {
 	key, err := generateRSAKeyPair()
 	if err != nil {

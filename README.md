@@ -52,7 +52,7 @@ func main() {
 
 	// Create a payment
 	id, err := client.Payment.Create(ctx, 0, bunq.PaymentCreateParams{
-		Amount:            &bunq.Amount{Value: "1.00", Currency: "EUR"},
+		Amount:            bunq.NewAmount(1.00, "EUR"),
 		CounterpartyAlias: &bunq.Pointer{Type: "IBAN", Value: "NL02BUNQ0000000000", Name: "Recipient"},
 		Description:       "Test payment",
 	})
@@ -78,7 +78,7 @@ client, _ := bunq.NewClient(ctx, bunq.Config{
 
 // Fund the sandbox account via sugar daddy
 client.RequestInquiry.Create(ctx, 0, bunq.RequestInquiryCreateParams{
-    AmountInquired:    &bunq.Amount{Value: "500.00", Currency: "EUR"},
+    AmountInquired:    bunq.NewAmount(500, "EUR"),
     CounterpartyAlias: &bunq.Pointer{Type: "EMAIL", Value: "sugardaddy@bunq.com"},
     Description:       "top up",
     RequireAddress:    "NONE",
