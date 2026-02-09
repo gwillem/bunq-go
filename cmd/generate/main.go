@@ -745,6 +745,16 @@ func writeStruct(b *strings.Builder, pc *pyClass, typeRegistry map[string]bool, 
 		return
 	}
 
+	// Build request field type overrides: when an object is used in both
+	// responses and requests (e.g. DraftPaymentEntry), prefer request types
+	// since the struct may be embedded in *CreateParams.
+	requestTypeOverride := map[string]string{}
+	if !paramsOnly {
+		for _, rf := range pc.requestFields {
+			requestTypeOverride[rf.goName] = rf.goType
+		}
+	}
+
 	fmt.Fprintf(b, "type %s struct {\n", pc.goName)
 
 	seen := map[string]bool{}
@@ -753,7 +763,11 @@ func writeStruct(b *strings.Builder, pc *pyClass, typeRegistry map[string]bool, 
 			continue
 		}
 		seen[f.goName] = true
-		fmt.Fprintf(b, "\t%s %s `json:\"%s,omitempty\"`\n", f.goName, f.goType, f.jsonTag)
+		goType := f.goType
+		if override, ok := requestTypeOverride[f.goName]; ok && override != goType {
+			goType = override
+		}
+		fmt.Fprintf(b, "\t%s %s `json:\"%s,omitempty\"`\n", f.goName, goType, f.jsonTag)
 	}
 
 	b.WriteString("}\n")
