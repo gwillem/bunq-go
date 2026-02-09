@@ -1,5 +1,7 @@
 # bunq-go
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/gwillem/bunq-go.svg)](https://pkg.go.dev/github.com/gwillem/bunq-go)
+
 Go SDK for the [bunq banking API](https://doc.bunq.com/api-reference/start-here). Generated from the official Python SDK with full endpoint coverage (165 services, 477 methods).
 
 ## Install
