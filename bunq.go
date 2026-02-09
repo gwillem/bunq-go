@@ -37,20 +37,16 @@ func (o *ListOptions) toParams() map[string]string {
 	}
 	p := map[string]string{}
 	if o.Count > 0 {
-		p["count"] = intToStr(o.Count)
+		p["count"] = fmt.Sprintf("%d", o.Count)
 	}
 	if o.OlderID > 0 {
-		p["older_id"] = intToStr(o.OlderID)
+		p["older_id"] = fmt.Sprintf("%d", o.OlderID)
 	}
 	if o.NewerID > 0 {
-		p["newer_id"] = intToStr(o.NewerID)
+		p["newer_id"] = fmt.Sprintf("%d", o.NewerID)
 	}
 	if len(p) == 0 {
 		return nil
 	}
 	return p
-}
-
-func intToStr(i int) string {
-	return fmt.Sprintf("%d", i)
 }

@@ -1,6 +1,6 @@
 # bunq-go
 
-Go SDK for the [bunq](https://www.bunq.com/) banking API. Generated from the official Python SDK with full endpoint coverage (165 services, 477 methods).
+Go SDK for the [bunq banking API](https://doc.bunq.com/api-reference/start-here). Generated from the official Python SDK with full endpoint coverage (165 services, 477 methods).
 
 ## Install
 

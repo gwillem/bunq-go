@@ -23,7 +23,7 @@ func TestIntegration(t *testing.T) {
 		if err != nil {
 			t.Fatalf("creating sandbox API key: %v", err)
 		}
-		t.Logf("Created sandbox API key: %s...", apiKey[:8])
+		t.Logf("Created sandbox API key: %s...", apiKey[:min(len(apiKey), 8)])
 	}
 
 	client, err := NewClient(ctx, Config{

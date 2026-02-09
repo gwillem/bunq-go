@@ -819,9 +819,10 @@ func generateServicesFile(classes []*pyClass) {
 		generateServiceMethods(&b, pc)
 	}
 
-	// Generate serviceContainer struct
-	b.WriteString("// serviceContainer holds all generated service fields.\n")
-	b.WriteString("type serviceContainer struct {\n")
+	// Generate ServiceContainer struct
+	b.WriteString("// ServiceContainer holds all generated service accessors.\n")
+	b.WriteString("// It is embedded in Client, so you can call e.g. client.Payment.Create(...).\n")
+	b.WriteString("type ServiceContainer struct {\n")
 	for _, pc := range serviceClasses {
 		fmt.Fprintf(&b, "\t%s *%sService\n", pc.goName, pc.goName)
 	}

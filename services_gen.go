@@ -4410,8 +4410,9 @@ func (s *HealthCheckService) List(ctx context.Context, opts *ListOptions) (*List
 	return unmarshalList[HealthCheck](body, "HealthCheckResult")
 }
 
-// serviceContainer holds all generated service fields.
-type serviceContainer struct {
+// ServiceContainer holds all generated service accessors.
+// It is embedded in Client, so you can call e.g. client.Payment.Create(...).
+type ServiceContainer struct {
 	BillingContractSubscription *BillingContractSubscriptionService
 	CustomerLimit *CustomerLimitService
 	InvoiceExportPdf *InvoiceExportPdfService

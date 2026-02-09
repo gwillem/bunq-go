@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -33,12 +34,12 @@ type Client struct {
 	userID                   int
 	primaryMonetaryAccountID int
 
-	mu sync.Mutex
+	mu sync.RWMutex
 
 	common service
 
-	// Embeds all generated service accessors (e.g. client.Payment, client.Card, etc.)
-	serviceContainer
+	// ServiceContainer embeds all generated service accessors (e.g. client.Payment, client.Card, etc.)
+	ServiceContainer
 }
 
 type service struct {
@@ -59,6 +60,25 @@ func (c *Client) request(ctx context.Context, method, path string, body any, use
 		if err := c.ensureSessionActive(ctx); err != nil {
 			return nil, nil, err
 		}
+	}
+
+	// Snapshot session fields for concurrent safety.
+	// When useSessionToken=true, other goroutines may be refreshing the session,
+	// so we read under RLock. When false, we're in a bootstrap path (NewClient
+	// or inside ensureSessionActive's write lock), so no lock is needed.
+	var token string
+	var privateKey *rsa.PrivateKey
+	var serverPubKey *rsa.PublicKey
+	if useSessionToken {
+		c.mu.RLock()
+		token = c.sessionToken
+		privateKey = c.privateKey
+		serverPubKey = c.serverPublicKey
+		c.mu.RUnlock()
+	} else {
+		token = c.installationToken
+		privateKey = c.privateKey
+		serverPubKey = c.serverPublicKey
 	}
 
 	var bodyBytes []byte
@@ -85,18 +105,13 @@ func (c *Client) request(ctx context.Context, method, path string, body any, use
 	req.Header.Set("X-Bunq-Region", "nl_NL")
 	req.Header.Set("Cache-Control", "no-cache")
 
-	// Set authentication token
-	token := c.installationToken
-	if useSessionToken {
-		token = c.sessionToken
-	}
 	if token != "" {
 		req.Header.Set("X-Bunq-Client-Authentication", token)
 	}
 
 	// Sign request body
-	if c.privateKey != nil && token != "" {
-		sig, err := signRequest(c.privateKey, bodyBytes)
+	if privateKey != nil && token != "" {
+		sig, err := signRequest(privateKey, bodyBytes)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -120,12 +135,11 @@ func (c *Client) request(ctx context.Context, method, path string, body any, use
 	}
 
 	// Verify server signature if we have the server public key
-	if c.serverPublicKey != nil {
+	if serverPubKey != nil {
 		serverSig := resp.Header.Get("X-Bunq-Server-Signature")
 		if serverSig != "" {
-			if err := verifyResponse(c.serverPublicKey, respBody, serverSig); err != nil {
-				// Signature verification is advisory; log but don't fail
-				_ = err
+			if err := verifyResponse(serverPubKey, respBody, serverSig); err != nil {
+				return nil, nil, fmt.Errorf("server signature verification failed: %w", err)
 			}
 		}
 	}
@@ -135,11 +149,11 @@ func (c *Client) request(ctx context.Context, method, path string, body any, use
 
 func (c *Client) get(ctx context.Context, path string, params map[string]string) ([]byte, http.Header, error) {
 	if len(params) > 0 {
-		parts := make([]string, 0, len(params))
-		for k, v := range params {
-			parts = append(parts, k+"="+v)
+		v := make(url.Values, len(params))
+		for key, val := range params {
+			v.Set(key, val)
 		}
-		path += "?" + strings.Join(parts, "&")
+		path += "?" + v.Encode()
 	}
 	return c.request(ctx, http.MethodGet, path, nil, true)
 }
