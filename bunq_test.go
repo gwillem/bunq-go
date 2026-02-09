@@ -1,0 +1,157 @@
+package bunq
+
+import (
+	"encoding/json"
+	"testing"
+)
+
+func TestUnmarshalID(t *testing.T) {
+	body := `{"Response":[{"Id":{"id":42}}]}`
+	id, err := unmarshalID([]byte(body))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if id != 42 {
+		t.Errorf("expected 42, got %d", id)
+	}
+}
+
+func TestUnmarshalUUID(t *testing.T) {
+	body := `{"Response":[{"Uuid":{"uuid":"abc-123"}}]}`
+	uuid, err := unmarshalUUID([]byte(body))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if uuid != "abc-123" {
+		t.Errorf("expected abc-123, got %s", uuid)
+	}
+}
+
+func TestUnmarshalObject(t *testing.T) {
+	body := `{"Response":[{"Payment":{"id":1,"description":"test","amount":{"value":"10.00","currency":"EUR"}}}]}`
+	payment, err := unmarshalObject[Payment]([]byte(body), "Payment")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if payment.ID != 1 {
+		t.Errorf("expected ID 1, got %d", payment.ID)
+	}
+	if payment.Description != "test" {
+		t.Errorf("expected description test, got %s", payment.Description)
+	}
+	if payment.Amount == nil || payment.Amount.Value != "10.00" {
+		t.Errorf("expected amount 10.00, got %v", payment.Amount)
+	}
+}
+
+func TestUnmarshalList(t *testing.T) {
+	body := `{"Response":[{"Payment":{"id":1}},{"Payment":{"id":2}}],"Pagination":{"older_id":0,"newer_id":3}}`
+	resp, err := unmarshalList[Payment]([]byte(body), "Payment")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(resp.Items) != 2 {
+		t.Fatalf("expected 2 items, got %d", len(resp.Items))
+	}
+	if resp.Items[0].ID != 1 {
+		t.Errorf("expected ID 1, got %d", resp.Items[0].ID)
+	}
+	if resp.Items[1].ID != 2 {
+		t.Errorf("expected ID 2, got %d", resp.Items[1].ID)
+	}
+	if resp.Pagination == nil {
+		t.Fatal("expected pagination")
+	}
+}
+
+func TestNewAPIError(t *testing.T) {
+	body := `{"Error":[{"error_description":"bad request"},{"error_description":"invalid field"}]}`
+	err := newAPIError(400, "resp-123", []byte(body))
+
+	var badReq *BadRequestError
+	if !isErr(err, &badReq) {
+		t.Fatalf("expected BadRequestError, got %T", err)
+	}
+	if badReq.StatusCode != 400 {
+		t.Errorf("expected 400, got %d", badReq.StatusCode)
+	}
+	if len(badReq.Messages) != 2 {
+		t.Errorf("expected 2 messages, got %d", len(badReq.Messages))
+	}
+}
+
+func isErr[T any](err error, target *T) bool {
+	// Simple type assertion helper
+	switch e := err.(type) {
+	case T:
+		*target = e
+		return true
+	default:
+		return false
+	}
+}
+
+func TestListOptions(t *testing.T) {
+	opts := &ListOptions{Count: 10, OlderID: 5}
+	params := opts.toParams()
+	if params["count"] != "10" {
+		t.Errorf("expected count=10, got %s", params["count"])
+	}
+	if params["older_id"] != "5" {
+		t.Errorf("expected older_id=5, got %s", params["older_id"])
+	}
+	if _, ok := params["newer_id"]; ok {
+		t.Error("expected no newer_id")
+	}
+}
+
+func TestAmountMarshal(t *testing.T) {
+	a := Amount{Value: "10.00", Currency: "EUR"}
+	b, err := json.Marshal(a)
+	if err != nil {
+		t.Fatalf("marshal: %v", err)
+	}
+	expected := `{"value":"10.00","currency":"EUR"}`
+	if string(b) != expected {
+		t.Errorf("expected %s, got %s", expected, string(b))
+	}
+}
+
+func TestSecuritySignVerify(t *testing.T) {
+	key, err := generateRSAKeyPair()
+	if err != nil {
+		t.Fatalf("keygen: %v", err)
+	}
+
+	body := []byte(`{"test":"data"}`)
+
+	sig, err := signRequest(key, body)
+	if err != nil {
+		t.Fatalf("sign: %v", err)
+	}
+
+	if err := verifyResponse(&key.PublicKey, body, sig); err != nil {
+		t.Fatalf("verify: %v", err)
+	}
+}
+
+func TestPublicKeyPEM(t *testing.T) {
+	key, err := generateRSAKeyPair()
+	if err != nil {
+		t.Fatalf("keygen: %v", err)
+	}
+
+	pem := publicKeyToPEM(&key.PublicKey)
+	if pem == "" {
+		t.Fatal("expected non-empty PEM")
+	}
+
+	pub, err := parsePublicKeyPEM(pem)
+	if err != nil {
+		t.Fatalf("parse: %v", err)
+	}
+
+	if !key.PublicKey.Equal(pub) {
+		t.Error("parsed key doesn't match original")
+	}
+}
