@@ -233,7 +233,7 @@ type GinmonTransaction struct {
 }
 
 type PaymentSuspendedOutgoing struct {
-	MonetaryAccountID string `json:"monetary_account_id,omitempty"`
+	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	Status string `json:"status,omitempty"`
 	TimeExecution string `json:"time_execution,omitempty"`
 }
@@ -642,13 +642,13 @@ type Customer struct {
 	ID int `json:"id,omitempty"`
 	Created string `json:"created,omitempty"`
 	Updated string `json:"updated,omitempty"`
-	BillingAccountID string `json:"billing_account_id,omitempty"`
+	BillingAccountID int `json:"billing_account_id,omitempty"`
 	InvoiceNotificationPreference string `json:"invoice_notification_preference,omitempty"`
 }
 
 type RelationUser struct {
-	UserID string `json:"user_id,omitempty"`
-	CounterUserID string `json:"counter_user_id,omitempty"`
+	UserID int `json:"user_id,omitempty"`
+	CounterUserID int `json:"counter_user_id,omitempty"`
 	LabelUser *LabelUser `json:"label_user,omitempty"`
 	CounterLabelUser *LabelUser `json:"counter_label_user,omitempty"`
 	Relationship string `json:"relationship,omitempty"`
@@ -828,8 +828,8 @@ type Event struct {
 	Created string `json:"created,omitempty"`
 	Updated string `json:"updated,omitempty"`
 	Action string `json:"action,omitempty"`
-	UserID string `json:"user_id,omitempty"`
-	MonetaryAccountID string `json:"monetary_account_id,omitempty"`
+	UserID int `json:"user_id,omitempty"`
+	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	Object *Event `json:"object,omitempty"`
 	Status string `json:"status,omitempty"`
 	ObjectDataAtEvent *Event `json:"object_data_at_event,omitempty"`
@@ -940,13 +940,13 @@ type MasterCardAction struct {
 	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
 	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	LabelCard *LabelCard `json:"label_card,omitempty"`
-	MerchantID string `json:"merchant_id,omitempty"`
+	MerchantID int `json:"merchant_id,omitempty"`
 	TokenStatus string `json:"token_status,omitempty"`
 	ReservationExpiryTime string `json:"reservation_expiry_time,omitempty"`
 	ClearingExpiryTime string `json:"clearing_expiry_time,omitempty"`
 	AppliedLimit string `json:"applied_limit,omitempty"`
 	SecureCodeID int `json:"secure_code_id,omitempty"`
-	WalletProviderID string `json:"wallet_provider_id,omitempty"`
+	WalletProviderID int `json:"wallet_provider_id,omitempty"`
 	RequestReferenceSplitTheBill []*RequestInquiryReference `json:"request_reference_split_the_bill,omitempty"`
 	CardTokenizationEvent *Event `json:"card_tokenization_event,omitempty"`
 	AllMastercardActionRefund []*MasterCardActionRefund `json:"all_mastercard_action_refund,omitempty"`
@@ -1027,10 +1027,10 @@ type UserBlocklistMasterCardMerchant struct {
 	Updated string `json:"updated,omitempty"`
 	Status string `json:"status,omitempty"`
 	MerchantName string `json:"merchant_name,omitempty"`
-	MerchantID string `json:"merchant_id,omitempty"`
+	MerchantID int `json:"merchant_id,omitempty"`
 	MerchantIdentifier string `json:"merchant_identifier,omitempty"`
-	MastercardMerchantID string `json:"mastercard_merchant_id,omitempty"`
-	ExternalMerchantID string `json:"external_merchant_id,omitempty"`
+	MastercardMerchantID int `json:"mastercard_merchant_id,omitempty"`
+	ExternalMerchantID int `json:"external_merchant_id,omitempty"`
 	MerchantHash string `json:"merchant_hash,omitempty"`
 	MerchantAvatar *Avatar `json:"merchant_avatar,omitempty"`
 }
@@ -1039,7 +1039,7 @@ type MasterCardActionReport struct {
 	MastercardActionID int `json:"mastercard_action_id,omitempty"`
 	Type string `json:"type,omitempty"`
 	Status string `json:"status,omitempty"`
-	MerchantID string `json:"merchant_id,omitempty"`
+	MerchantID int `json:"merchant_id,omitempty"`
 	MerchantName string `json:"merchant_name,omitempty"`
 	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 }
@@ -1202,8 +1202,8 @@ type TransferwiseTransfer struct {
 }
 
 type TransferwiseTransferCreateParams struct {
-	MonetaryAccountID string `json:"monetary_account_id,omitempty"`
-	RecipientID string `json:"recipient_id,omitempty"`
+	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
+	RecipientID int `json:"recipient_id,omitempty"`
 }
 
 type TransferwiseQuote struct {
@@ -1211,7 +1211,7 @@ type TransferwiseQuote struct {
 	Created string `json:"created,omitempty"`
 	Updated string `json:"updated,omitempty"`
 	TimeExpiry string `json:"time_expiry,omitempty"`
-	QuoteID string `json:"quote_id,omitempty"`
+	QuoteID int `json:"quote_id,omitempty"`
 	AmountSource *Amount `json:"amount_source,omitempty"`
 	AmountTarget *Amount `json:"amount_target,omitempty"`
 	AmountFee *Amount `json:"amount_fee,omitempty"`
@@ -1403,8 +1403,8 @@ type InsightEvent struct {
 	Created string `json:"created,omitempty"`
 	Updated string `json:"updated,omitempty"`
 	Action string `json:"action,omitempty"`
-	UserID string `json:"user_id,omitempty"`
-	MonetaryAccountID string `json:"monetary_account_id,omitempty"`
+	UserID int `json:"user_id,omitempty"`
+	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	Object *Event `json:"object,omitempty"`
 	Status string `json:"status,omitempty"`
 }
@@ -1527,7 +1527,7 @@ type OpenBankingProviderBank struct {
 	Name string `json:"name,omitempty"`
 	AccountInformationServiceStatus string `json:"account_information_service_status,omitempty"`
 	PaymentInformationServiceStatus string `json:"payment_information_service_status,omitempty"`
-	AiiaProviderID string `json:"aiia_provider_id,omitempty"`
+	AiiaProviderID int `json:"aiia_provider_id,omitempty"`
 	Country string `json:"country,omitempty"`
 	AllPaymentMethodAllowedSepa []string `json:"all_payment_method_allowed_sepa,omitempty"`
 	AllPaymentMethodAllowedDomestic []string `json:"all_payment_method_allowed_domestic,omitempty"`
@@ -2834,7 +2834,7 @@ type OauthClient struct {
 	ID int `json:"id,omitempty"`
 	Status string `json:"status,omitempty"`
 	DisplayName string `json:"display_name,omitempty"`
-	ClientID string `json:"client_id,omitempty"`
+	ClientID int `json:"client_id,omitempty"`
 	Secret string `json:"secret,omitempty"`
 	CallbackURL []*OauthCallbackUrl `json:"callback_url,omitempty"`
 }
@@ -3025,7 +3025,7 @@ type TokenQrRequestSofortCreateParams struct {
 }
 
 type TransferwiseAccountQuote struct {
-	AccountID string `json:"account_id,omitempty"`
+	AccountID int `json:"account_id,omitempty"`
 	Currency string `json:"currency,omitempty"`
 	Country string `json:"country,omitempty"`
 	NameAccountHolder string `json:"name_account_holder,omitempty"`
@@ -3064,7 +3064,7 @@ type TransferwiseQuoteTemporary struct {
 	Created string `json:"created,omitempty"`
 	Updated string `json:"updated,omitempty"`
 	TimeExpiry string `json:"time_expiry,omitempty"`
-	QuoteID string `json:"quote_id,omitempty"`
+	QuoteID int `json:"quote_id,omitempty"`
 	AmountSource *Amount `json:"amount_source,omitempty"`
 	AmountTarget *Amount `json:"amount_target,omitempty"`
 	Rate string `json:"rate,omitempty"`
@@ -3084,7 +3084,7 @@ type TransferwiseTransferRequirement struct {
 }
 
 type TransferwiseTransferRequirementCreateParams struct {
-	RecipientID string `json:"recipient_id,omitempty"`
+	RecipientID int `json:"recipient_id,omitempty"`
 	Detail []*TransferwiseRequirementField `json:"detail,omitempty"`
 }
 

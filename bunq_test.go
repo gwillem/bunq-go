@@ -1,8 +1,14 @@
 package bunq
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"sync/atomic"
 	"testing"
+	"time"
 )
 
 func TestUnmarshalID(t *testing.T) {
@@ -45,7 +51,7 @@ func TestUnmarshalObject(t *testing.T) {
 }
 
 func TestUnmarshalList(t *testing.T) {
-	body := `{"Response":[{"Payment":{"id":1}},{"Payment":{"id":2}}],"Pagination":{"older_id":0,"newer_id":3}}`
+	body := `{"Response":[{"Payment":{"id":1}},{"Payment":{"id":2}}],"Pagination":{"older_url":"/v1/user/1/monetary-account/2/payment?older_id=100&count=10","newer_url":"/v1/user/1/monetary-account/2/payment?newer_id=3&count=10"}}`
 	resp, err := unmarshalList[Payment]([]byte(body), "Payment")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
@@ -61,6 +67,44 @@ func TestUnmarshalList(t *testing.T) {
 	}
 	if resp.Pagination == nil {
 		t.Fatal("expected pagination")
+	}
+	olderID, ok := resp.Pagination.olderID()
+	if !ok {
+		t.Fatal("expected olderID to be present")
+	}
+	if olderID != 100 {
+		t.Errorf("expected olderID 100, got %d", olderID)
+	}
+	newerID, ok := resp.Pagination.newerID()
+	if !ok {
+		t.Fatal("expected newerID to be present")
+	}
+	if newerID != 3 {
+		t.Errorf("expected newerID 3, got %d", newerID)
+	}
+}
+
+func TestPaginationNilAndEmpty(t *testing.T) {
+	// No pagination in response
+	body := `{"Response":[{"Payment":{"id":1}}]}`
+	resp, err := unmarshalList[Payment]([]byte(body), "Payment")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	_, ok := resp.Pagination.olderID()
+	if ok {
+		t.Error("expected no olderID for nil pagination")
+	}
+
+	// Empty pagination (last page)
+	body = `{"Response":[{"Payment":{"id":1}}],"Pagination":{}}`
+	resp, err = unmarshalList[Payment]([]byte(body), "Payment")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	_, ok = resp.Pagination.olderID()
+	if ok {
+		t.Error("expected no olderID for empty pagination")
 	}
 }
 
@@ -262,5 +306,105 @@ func TestPublicKeyPEM(t *testing.T) {
 
 	if !key.PublicKey.Equal(pub) {
 		t.Error("parsed key doesn't match original")
+	}
+}
+
+func TestRetryOn429(t *testing.T) {
+	var calls atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		n := calls.Add(1)
+		if n <= 2 {
+			// Return Retry-After: 0 to avoid slow tests
+			w.Header().Set("Retry-After", "0")
+			w.WriteHeader(http.StatusTooManyRequests)
+			fmt.Fprintf(w, `{"Error":[{"error_description":"Too many requests"}]}`)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, `{"Response":[{"Id":{"id":42}}]}`)
+	}))
+	defer srv.Close()
+
+	c := &Client{
+		httpClient: srv.Client(),
+		baseURL:    srv.URL,
+	}
+
+	body, _, err := c.request(context.Background(), http.MethodGet, "test", nil, false)
+	if err != nil {
+		t.Fatalf("expected success after retries, got: %v", err)
+	}
+
+	id, err := unmarshalID(body)
+	if err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if id != 42 {
+		t.Errorf("expected 42, got %d", id)
+	}
+	if n := calls.Load(); n != 3 {
+		t.Errorf("expected 3 calls, got %d", n)
+	}
+}
+
+func TestRetryOn429_ExhaustsRetries(t *testing.T) {
+	var calls atomic.Int32
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls.Add(1)
+		w.Header().Set("Retry-After", "0")
+		w.WriteHeader(http.StatusTooManyRequests)
+		fmt.Fprintf(w, `{"Error":[{"error_description":"Too many requests"}]}`)
+	}))
+	defer srv.Close()
+
+	c := &Client{
+		httpClient: srv.Client(),
+		baseURL:    srv.URL,
+	}
+
+	_, _, err := c.request(context.Background(), http.MethodGet, "test", nil, false)
+	if err == nil {
+		t.Fatal("expected error after exhausting retries")
+	}
+	var tooMany *TooManyRequestsError
+	if !isErr(err, &tooMany) {
+		t.Fatalf("expected TooManyRequestsError, got %T: %v", err, err)
+	}
+	if n := calls.Load(); n != 6 {
+		t.Errorf("expected 6 calls (1 + 5 retries), got %d", n)
+	}
+}
+
+func TestRetryOn429_ExponentialBackoff(t *testing.T) {
+	var timestamps []time.Time
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		timestamps = append(timestamps, time.Now())
+		if len(timestamps) < 4 {
+			w.WriteHeader(http.StatusTooManyRequests)
+			fmt.Fprintf(w, `{"Error":[{"error_description":"Too many requests"}]}`)
+			return
+		}
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, `{"Response":[{"Id":{"id":1}}]}`)
+	}))
+	defer srv.Close()
+
+	c := &Client{
+		httpClient: srv.Client(),
+		baseURL:    srv.URL,
+	}
+
+	_, _, err := c.request(context.Background(), http.MethodGet, "test", nil, false)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Verify exponential backoff: gaps should roughly double (1s, 2s, 4s)
+	for i := 1; i < len(timestamps); i++ {
+		gap := timestamps[i].Sub(timestamps[i-1])
+		expected := time.Second << (i - 1)
+		if gap < expected/2 || gap > expected*2 {
+			t.Errorf("gap %d: got %v, expected ~%v", i, gap, expected)
+		}
 	}
 }

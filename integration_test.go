@@ -5,7 +5,6 @@ package bunq
 import (
 	"context"
 	"errors"
-	"os"
 	"testing"
 	"time"
 )
@@ -15,16 +14,11 @@ func boolPtr(b bool) *bool { return &b }
 func TestIntegration(t *testing.T) {
 	ctx := context.Background()
 
-	apiKey := os.Getenv("BUNQ_API_KEY")
-	if apiKey == "" {
-		t.Log("No BUNQ_API_KEY set, creating sandbox user...")
-		var err error
-		apiKey, err = CreateSandboxAPIKey()
-		if err != nil {
-			t.Fatalf("creating sandbox API key: %v", err)
-		}
-		t.Logf("Created sandbox API key: %s...", apiKey[:min(len(apiKey), 8)])
+	apiKey, err := CreateSandboxAPIKey()
+	if err != nil {
+		t.Fatalf("creating sandbox API key: %v", err)
 	}
+	t.Logf("Created sandbox API key: %s...", apiKey[:min(len(apiKey), 8)])
 
 	client, err := NewClient(ctx, Config{
 		APIKey:      apiKey,
@@ -39,18 +33,20 @@ func TestIntegration(t *testing.T) {
 	t.Logf("Primary Account ID: %d", client.PrimaryMonetaryAccountID())
 
 	t.Run("ListMonetaryAccounts", func(t *testing.T) {
-		resp, err := client.MonetaryAccount.List(ctx, nil)
-		if err != nil {
-			t.Fatalf("listing monetary accounts: %v", err)
+		count := 0
+		for _, err := range client.MonetaryAccount.List(ctx, nil) {
+			if err != nil {
+				t.Fatalf("listing monetary accounts: %v", err)
+			}
+			count++
 		}
-		if len(resp.Items) == 0 {
+		if count == 0 {
 			t.Fatal("expected at least one monetary account")
 		}
-		t.Logf("Found %d monetary accounts", len(resp.Items))
+		t.Logf("Found %d monetary accounts", count)
 	})
 
 	t.Run("RequestMoney", func(t *testing.T) {
-		// Request money from the sandbox sugar daddy to fund the account
 		reqID, err := client.RequestInquiry.Create(ctx, 0, RequestInquiryCreateParams{
 			AmountInquired: NewAmount(100, "EUR"),
 			CounterpartyAlias: &Pointer{
@@ -68,10 +64,8 @@ func TestIntegration(t *testing.T) {
 	})
 
 	t.Run("CreatePayment", func(t *testing.T) {
-		// Wait for sugar daddy to process the request
 		time.Sleep(2 * time.Second)
 
-		// Create a payment (account should now be funded by sugar daddy)
 		var paymentID int
 		var err error
 		for range 3 {
@@ -99,7 +93,6 @@ func TestIntegration(t *testing.T) {
 		}
 		t.Logf("Created payment with ID: %d", paymentID)
 
-		// Get the payment by ID
 		t.Run("GetPayment", func(t *testing.T) {
 			payment, err := client.Payment.Get(ctx, 0, paymentID)
 			if err != nil {
@@ -116,21 +109,41 @@ func TestIntegration(t *testing.T) {
 	})
 
 	t.Run("ListPayments", func(t *testing.T) {
-		resp, err := client.Payment.List(ctx, 0, &ListOptions{Count: 5})
-		if err != nil {
-			t.Fatalf("listing payments: %v", err)
+		count := 0
+		for p, err := range client.Payment.List(ctx, 0, &ListOptions{Count: 5}) {
+			if err != nil {
+				t.Fatalf("listing payments: %v", err)
+			}
+			count++
+			t.Logf("  Payment %d: %s %s - %s", p.ID, p.Amount.Value, p.Amount.Currency, p.Description)
 		}
-		t.Logf("Found %d payments (count=5)", len(resp.Items))
-		if resp.Pagination != nil {
-			t.Logf("Pagination: older_id=%v, newer_id=%v", resp.Pagination.OlderID, resp.Pagination.NewerID)
-		}
+		t.Logf("Found %d payments (count=5)", count)
 	})
 
 	t.Run("ListCards", func(t *testing.T) {
-		resp, err := client.Card.List(ctx, nil)
-		if err != nil {
-			t.Fatalf("listing cards: %v", err)
+		count := 0
+		for _, err := range client.Card.List(ctx, nil) {
+			if err != nil {
+				t.Fatalf("listing cards: %v", err)
+			}
+			count++
 		}
-		t.Logf("Found %d cards", len(resp.Items))
+		t.Logf("Found %d cards", count)
+	})
+
+	// Pagination: the CreatePayment + RequestMoney above guarantee >=2 payments.
+	// List with Count:1 to force multiple pages.
+	t.Run("Pagination", func(t *testing.T) {
+		total := 0
+		for _, err := range client.Payment.List(ctx, 0, &ListOptions{Count: 1}) {
+			if err != nil {
+				t.Fatalf("listing payments: %v", err)
+			}
+			total++
+		}
+		t.Logf("Listed %d total payments across pages", total)
+		if total < 2 {
+			t.Errorf("expected at least 2 payments, got %d", total)
+		}
 	})
 }

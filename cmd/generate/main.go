@@ -267,6 +267,7 @@ func parseFields(body string, pc *pyClass) {
 		// Look up type from docstring
 		pyType := pc.docFields[fieldName]
 		goType := pythonTypeToGo(pyType, false)
+		goType = overrideIDFieldType(fieldName, goType)
 		goFieldName := snakeToPascal(fieldName)
 		jsonTag := strings.TrimSuffix(strings.TrimPrefix(fieldName, "_"), "_")
 
@@ -288,6 +289,7 @@ func parseFields(body string, pc *pyClass) {
 			pyType = pc.docFields[fieldName]
 		}
 		goType := pythonTypeToGo(pyType, true)
+		goType = overrideIDFieldType(fieldName, goType)
 		goFieldName := snakeToPascal(fieldName)
 		jsonTag := strings.TrimSuffix(strings.TrimPrefix(fieldName, "_"), "_")
 
@@ -543,6 +545,15 @@ func pythonTypeToGo(pyType string, isRequest bool) string {
 	}
 
 	return "string" // fallback
+}
+
+// overrideIDFieldType fixes Python SDK type annotations that incorrectly
+// declare _id fields as str. The bunq API always returns IDs as integers.
+func overrideIDFieldType(fieldName, goType string) string {
+	if strings.HasSuffix(fieldName, "_id") && goType == "string" {
+		return "int"
+	}
+	return goType
 }
 
 // snakeToPascal converts snake_case to PascalCase.

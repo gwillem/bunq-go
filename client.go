@@ -9,7 +9,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
+	"strconv"
 	"sync"
 	"time"
 
@@ -90,43 +90,70 @@ func (c *Client) request(ctx context.Context, method, path string, body any, use
 		}
 	}
 
-	url := c.baseURL + "/" + path
-	req, err := http.NewRequestWithContext(ctx, method, url, bytes.NewReader(bodyBytes))
-	if err != nil {
-		return nil, nil, fmt.Errorf("creating request: %w", err)
+	reqURL := c.baseURL + "/" + path
+
+	buildReq := func() (*http.Request, error) {
+		req, err := http.NewRequestWithContext(ctx, method, reqURL, bytes.NewReader(bodyBytes))
+		if err != nil {
+			return nil, fmt.Errorf("creating request: %w", err)
+		}
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("User-Agent", userAgent)
+		req.Header.Set("X-Bunq-Client-Request-Id", uuid.New().String())
+		req.Header.Set("X-Bunq-Geolocation", "0 0 0 0 NL")
+		req.Header.Set("X-Bunq-Language", "en_US")
+		req.Header.Set("X-Bunq-Region", "nl_NL")
+		req.Header.Set("Cache-Control", "no-cache")
+		if token != "" {
+			req.Header.Set("X-Bunq-Client-Authentication", token)
+		}
+		if privateKey != nil && token != "" {
+			sig, err := signRequest(privateKey, bodyBytes)
+			if err != nil {
+				return nil, err
+			}
+			req.Header.Set("X-Bunq-Client-Signature", sig)
+		}
+		return req, nil
 	}
 
-	// Set headers
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("User-Agent", userAgent)
-	req.Header.Set("X-Bunq-Client-Request-Id", uuid.New().String())
-	req.Header.Set("X-Bunq-Geolocation", "0 0 0 0 NL")
-	req.Header.Set("X-Bunq-Language", "en_US")
-	req.Header.Set("X-Bunq-Region", "nl_NL")
-	req.Header.Set("Cache-Control", "no-cache")
-
-	if token != "" {
-		req.Header.Set("X-Bunq-Client-Authentication", token)
-	}
-
-	// Sign request body
-	if privateKey != nil && token != "" {
-		sig, err := signRequest(privateKey, bodyBytes)
+	var resp *http.Response
+	var respBody []byte
+	const maxRetries = 5
+	for attempt := range maxRetries + 1 {
+		req, err := buildReq()
 		if err != nil {
 			return nil, nil, err
 		}
-		req.Header.Set("X-Bunq-Client-Signature", sig)
-	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		return nil, nil, fmt.Errorf("executing request: %w", err)
-	}
-	defer resp.Body.Close()
+		resp, err = c.httpClient.Do(req)
+		if err != nil {
+			return nil, nil, fmt.Errorf("executing request: %w", err)
+		}
 
-	respBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, nil, fmt.Errorf("reading response body: %w", err)
+		respBody, err = io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if err != nil {
+			return nil, nil, fmt.Errorf("reading response body: %w", err)
+		}
+
+		if resp.StatusCode != http.StatusTooManyRequests || attempt == maxRetries {
+			break
+		}
+
+		// bunq enforces a 30-second timeout after a 429. Use Retry-After
+		// header if present, otherwise exponential backoff: 1, 2, 4, 8, 16s.
+		wait := time.Second << attempt
+		if s := resp.Header.Get("Retry-After"); s != "" {
+			if secs, err := strconv.Atoi(s); err == nil && secs > 0 {
+				wait = time.Duration(secs) * time.Second
+			}
+		}
+		select {
+		case <-ctx.Done():
+			return nil, nil, ctx.Err()
+		case <-time.After(wait):
+		}
 	}
 
 	if resp.StatusCode != http.StatusOK {
@@ -237,17 +264,7 @@ func unmarshalObject[T any](body []byte, key string) (*T, error) {
 
 	inner, ok := outer[key]
 	if !ok {
-		// Try to find a key that starts with the given key (for anchor objects)
-		for k, v := range outer {
-			if strings.HasPrefix(k, key) {
-				inner = v
-				ok = true
-				break
-			}
-		}
-		if !ok {
-			return nil, fmt.Errorf("key %q not found in response", key)
-		}
+		return nil, fmt.Errorf("key %q not found in response", key)
 	}
 
 	var result T
@@ -276,17 +293,7 @@ func unmarshalList[T any](body []byte, key string) (*listResponse[T], error) {
 
 		inner, ok := outer[key]
 		if !ok {
-			// Try prefix match
-			for k, v := range outer {
-				if strings.HasPrefix(k, key) {
-					inner = v
-					ok = true
-					break
-				}
-			}
-			if !ok {
-				continue
-			}
+			continue
 		}
 
 		var item T
