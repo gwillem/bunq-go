@@ -258,7 +258,7 @@ func unmarshalObject[T any](body []byte, key string) (*T, error) {
 }
 
 // unmarshalList extracts a list of objects from the response envelope.
-func unmarshalList[T any](body []byte, key string) (*ListResponse[T], error) {
+func unmarshalList[T any](body []byte, key string) (*listResponse[T], error) {
 	var envelope struct {
 		Response   []json.RawMessage `json:"Response"`
 		Pagination *Pagination       `json:"Pagination"`
@@ -296,7 +296,7 @@ func unmarshalList[T any](body []byte, key string) (*ListResponse[T], error) {
 		items = append(items, item)
 	}
 
-	return &ListResponse[T]{
+	return &listResponse[T]{
 		Items:      items,
 		Pagination: envelope.Pagination,
 	}, nil

@@ -48,9 +48,9 @@ type Invoice struct {
 	TotalVATInclusive *Amount `json:"total_vat_inclusive,omitempty"`
 	TotalVATExclusive *Amount `json:"total_vat_exclusive,omitempty"`
 	TotalVAT *Amount `json:"total_vat,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
 	Address *Address `json:"address,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	CounterpartyAddress *Address `json:"counterparty_address,omitempty"`
 	ChamberOfCommerceNumber string `json:"chamber_of_commerce_number,omitempty"`
 	VATNumber string `json:"vat_number,omitempty"`
@@ -68,9 +68,9 @@ type InvoiceByUser struct {
 	TotalVATInclusive *Amount `json:"total_vat_inclusive,omitempty"`
 	TotalVATExclusive *Amount `json:"total_vat_exclusive,omitempty"`
 	TotalVAT *Amount `json:"total_vat,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
 	Address *Address `json:"address,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	CounterpartyAddress *Address `json:"counterparty_address,omitempty"`
 	ChamberOfCommerceNumber string `json:"chamber_of_commerce_number,omitempty"`
 	VATNumber string `json:"vat_number,omitempty"`
@@ -140,8 +140,8 @@ type BankSwitchServiceNetherlandsIncomingPayment struct {
 
 type BankSwitchServiceNetherlandsIncoming struct {
 	UserAlias *LabelUser `json:"user_alias,omitempty"`
-	Alias *Pointer `json:"alias,omitempty"`
-	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Status string `json:"status,omitempty"`
 	SubStatus string `json:"sub_status,omitempty"`
 	TimeStartDesired string `json:"time_start_desired,omitempty"`
@@ -160,8 +160,8 @@ type Payment struct {
 	Updated string `json:"updated,omitempty"`
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	Amount *Amount `json:"amount,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	Type string `json:"type,omitempty"`
 	SubType string `json:"sub_type,omitempty"`
@@ -227,8 +227,8 @@ type GinmonTransaction struct {
 	Isin string `json:"isin,omitempty"`
 	ExternalIdentifier string `json:"external_identifier,omitempty"`
 	LabelUser *LabelUser `json:"label_user,omitempty"`
-	LabelMonetaryAccount *MonetaryAccountReference `json:"label_monetary_account,omitempty"`
-	CounterLabelMonetaryAccount *MonetaryAccountReference `json:"counter_label_monetary_account,omitempty"`
+	LabelMonetaryAccount *LabelMonetaryAccount `json:"label_monetary_account,omitempty"`
+	CounterLabelMonetaryAccount *LabelMonetaryAccount `json:"counter_label_monetary_account,omitempty"`
 	EventID int `json:"event_id,omitempty"`
 }
 
@@ -242,11 +242,11 @@ type BunqMeFundraiserProfileUser struct {
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	OwnerUserID int `json:"owner_user_id,omitempty"`
 	Color string `json:"color,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
 	Currency string `json:"currency,omitempty"`
 	Description string `json:"description,omitempty"`
 	Attachment *AttachmentPublic `json:"attachment,omitempty"`
-	Pointer *Pointer `json:"pointer,omitempty"`
+	Pointer *LabelMonetaryAccount `json:"pointer,omitempty"`
 	RedirectURL string `json:"redirect_url,omitempty"`
 	Status string `json:"status,omitempty"`
 }
@@ -261,11 +261,11 @@ type BunqMeFundraiserResult struct {
 
 type BunqMeFundraiserProfile struct {
 	Color string `json:"color,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
 	Currency string `json:"currency,omitempty"`
 	Description string `json:"description,omitempty"`
 	Attachment *AttachmentPublic `json:"attachment,omitempty"`
-	Pointer *Pointer `json:"pointer,omitempty"`
+	Pointer *LabelMonetaryAccount `json:"pointer,omitempty"`
 	Status string `json:"status,omitempty"`
 	RedirectURL string `json:"redirect_url,omitempty"`
 	InviteProfileName string `json:"invite_profile_name,omitempty"`
@@ -284,7 +284,7 @@ type BunqMeTab struct {
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	Status string `json:"status,omitempty"`
 	Type string `json:"type,omitempty"`
-	AliasMonetaryAccount *MonetaryAccountReference `json:"alias_monetary_account,omitempty"`
+	AliasMonetaryAccount *LabelMonetaryAccount `json:"alias_monetary_account,omitempty"`
 	BunqmeTabShareURL string `json:"bunqme_tab_share_url,omitempty"`
 	BunqmeTabEntry *BunqMeTabEntry `json:"bunqme_tab_entry,omitempty"`
 	BunqmeTabEntries []*BunqMeTabEntry `json:"bunqme_tab_entries,omitempty"`
@@ -306,7 +306,7 @@ type BunqMeTabUpdateParams struct {
 type BunqMeTabEntry struct {
 	UUID string `json:"uuid,omitempty"`
 	AmountInquired *Amount `json:"amount_inquired,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	Status string `json:"status,omitempty"`
 	RedirectURL string `json:"redirect_url,omitempty"`
@@ -360,8 +360,8 @@ type CardCredit struct {
 	CardLimit *Amount `json:"card_limit,omitempty"`
 	CardLimitATM *Amount `json:"card_limit_atm,omitempty"`
 	CountryPermission []*CardCountryPermission `json:"country_permission,omitempty"`
-	LabelMonetaryAccountOrdered *MonetaryAccountReference `json:"label_monetary_account_ordered,omitempty"`
-	LabelMonetaryAccountCurrent *MonetaryAccountReference `json:"label_monetary_account_current,omitempty"`
+	LabelMonetaryAccountOrdered *LabelMonetaryAccount `json:"label_monetary_account_ordered,omitempty"`
+	LabelMonetaryAccountCurrent *LabelMonetaryAccount `json:"label_monetary_account_current,omitempty"`
 	MonetaryAccount *MonetaryAccount `json:"monetary_account,omitempty"`
 	PinCodeAssignment []*CardPinAssignment `json:"pin_code_assignment,omitempty"`
 	MonetaryAccountIDFallback int `json:"monetary_account_id_fallback,omitempty"`
@@ -437,8 +437,8 @@ type CardDebit struct {
 	CardLimit *Amount `json:"card_limit,omitempty"`
 	CardLimitATM *Amount `json:"card_limit_atm,omitempty"`
 	CountryPermission []*CardCountryPermission `json:"country_permission,omitempty"`
-	LabelMonetaryAccountOrdered *MonetaryAccountReference `json:"label_monetary_account_ordered,omitempty"`
-	LabelMonetaryAccountCurrent *MonetaryAccountReference `json:"label_monetary_account_current,omitempty"`
+	LabelMonetaryAccountOrdered *LabelMonetaryAccount `json:"label_monetary_account_ordered,omitempty"`
+	LabelMonetaryAccountCurrent *LabelMonetaryAccount `json:"label_monetary_account_current,omitempty"`
 	MonetaryAccount *MonetaryAccount `json:"monetary_account,omitempty"`
 	PinCodeAssignment []*CardPinAssignment `json:"pin_code_assignment,omitempty"`
 	MonetaryAccountIDFallback int `json:"monetary_account_id_fallback,omitempty"`
@@ -504,8 +504,8 @@ type Card struct {
 	CardLimit *Amount `json:"card_limit,omitempty"`
 	CardLimitATM *Amount `json:"card_limit_atm,omitempty"`
 	CountryPermission []*CardCountryPermission `json:"country_permission,omitempty"`
-	LabelMonetaryAccountOrdered *MonetaryAccountReference `json:"label_monetary_account_ordered,omitempty"`
-	LabelMonetaryAccountCurrent *MonetaryAccountReference `json:"label_monetary_account_current,omitempty"`
+	LabelMonetaryAccountOrdered *LabelMonetaryAccount `json:"label_monetary_account_ordered,omitempty"`
+	LabelMonetaryAccountCurrent *LabelMonetaryAccount `json:"label_monetary_account_current,omitempty"`
 	MonetaryAccount *MonetaryAccount `json:"monetary_account,omitempty"`
 	PinCodeAssignment []*CardPinAssignment `json:"pin_code_assignment,omitempty"`
 	MonetaryAccountIDFallback int `json:"monetary_account_id_fallback,omitempty"`
@@ -536,7 +536,7 @@ type CardUpdateParams struct {
 }
 
 type CertificatePinned struct {
-	CertificateChain []*Certificate `json:"certificate_chain,omitempty"`
+	CertificateChain string `json:"certificate_chain,omitempty"`
 	ID int `json:"id,omitempty"`
 }
 
@@ -759,8 +759,8 @@ type CurrencyConversion struct {
 	GroupUUID string `json:"group_uuid,omitempty"`
 	Type string `json:"type,omitempty"`
 	OrderType string `json:"order_type,omitempty"`
-	LabelMonetaryAccount *MonetaryAccountReference `json:"label_monetary_account,omitempty"`
-	CounterLabelMonetaryAccount *MonetaryAccountReference `json:"counter_label_monetary_account,omitempty"`
+	LabelMonetaryAccount *LabelMonetaryAccount `json:"label_monetary_account,omitempty"`
+	CounterLabelMonetaryAccount *LabelMonetaryAccount `json:"counter_label_monetary_account,omitempty"`
 	Payment *Payment `json:"payment,omitempty"`
 }
 
@@ -846,8 +846,8 @@ type FeatureAnnouncement struct {
 
 type IdealMerchantTransaction struct {
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	AmountGuaranteed *Amount `json:"amount_guaranteed,omitempty"`
 	AmountRequested *Amount `json:"amount_requested,omitempty"`
 	Expiration string `json:"expiration,omitempty"`
@@ -937,8 +937,8 @@ type MasterCardAction struct {
 	ClearingStatus string `json:"clearing_status,omitempty"`
 	MaturityDate string `json:"maturity_date,omitempty"`
 	City string `json:"city,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	LabelCard *LabelCard `json:"label_card,omitempty"`
 	MerchantID string `json:"merchant_id,omitempty"`
 	TokenStatus string `json:"token_status,omitempty"`
@@ -976,8 +976,8 @@ type MasterCardActionRefund struct {
 	SubType string `json:"sub_type,omitempty"`
 	Reason string `json:"reason,omitempty"`
 	Amount *Amount `json:"amount,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	LabelCard *LabelCard `json:"label_card,omitempty"`
 	TimeRefund string `json:"time_refund,omitempty"`
@@ -1041,7 +1041,7 @@ type MasterCardActionReport struct {
 	Status string `json:"status,omitempty"`
 	MerchantID string `json:"merchant_id,omitempty"`
 	MerchantName string `json:"merchant_name,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 }
 
 type CompanyEmployeeCardReceipt struct {
@@ -1079,7 +1079,7 @@ type RequestInquiry struct {
 	AmountResponded *Amount `json:"amount_responded,omitempty"`
 	UserAliasCreated *LabelUser `json:"user_alias_created,omitempty"`
 	UserAliasRevoked *LabelUser `json:"user_alias_revoked,omitempty"`
-	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	MerchantReference string `json:"merchant_reference,omitempty"`
 	Attachment []*BunqId `json:"attachment,omitempty"`
@@ -1144,8 +1144,8 @@ type RequestResponse struct {
 	AmountResponded *Amount `json:"amount_responded,omitempty"`
 	Status string `json:"status,omitempty"`
 	Description string `json:"description,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Attachment []*Attachment `json:"attachment,omitempty"`
 	MinimumAge int `json:"minimum_age,omitempty"`
 	RequireAddress string `json:"require_address,omitempty"`
@@ -1186,8 +1186,8 @@ type WhitelistResult struct {
 type Whitelist struct{}
 
 type TransferwiseTransfer struct {
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Status string `json:"status,omitempty"`
 	SubStatus string `json:"sub_status,omitempty"`
 	StatusTransferwise string `json:"status_transferwise,omitempty"`
@@ -1227,10 +1227,10 @@ type TransferwiseQuoteCreateParams struct {
 }
 
 type ShareInviteMonetaryAccountInquiry struct {
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
 	UserAliasCreated *LabelUser `json:"user_alias_created,omitempty"`
 	UserAliasRevoked *LabelUser `json:"user_alias_revoked,omitempty"`
-	CounterUserAlias *Pointer `json:"counter_user_alias,omitempty"`
+	CounterUserAlias *LabelUser `json:"counter_user_alias,omitempty"`
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	Status string `json:"status,omitempty"`
 	AccessType string `json:"access_type,omitempty"`
@@ -1266,7 +1266,7 @@ type ShareInviteMonetaryAccountResponse struct {
 	ID int `json:"id,omitempty"`
 	Created string `json:"created,omitempty"`
 	Updated string `json:"updated,omitempty"`
-	CounterAlias *MonetaryAccountReference `json:"counter_alias,omitempty"`
+	CounterAlias *LabelMonetaryAccount `json:"counter_alias,omitempty"`
 	UserAliasCancelled *LabelUser `json:"user_alias_cancelled,omitempty"`
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	DraftShareInviteBankID int `json:"draft_share_invite_bank_id,omitempty"`
@@ -1287,8 +1287,8 @@ type ShareInviteMonetaryAccountResponseUpdateParams struct {
 
 type SofortMerchantTransaction struct {
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	AmountGuaranteed *Amount `json:"amount_guaranteed,omitempty"`
 	AmountRequested *Amount `json:"amount_requested,omitempty"`
 	Issuer string `json:"issuer,omitempty"`
@@ -1387,7 +1387,7 @@ type ExportStatement struct {
 	StatementNumber int `json:"statement_number,omitempty"`
 	StatementFormat string `json:"statement_format,omitempty"`
 	RegionalFormat string `json:"regional_format,omitempty"`
-	AliasMonetaryAccount *MonetaryAccountReference `json:"alias_monetary_account,omitempty"`
+	AliasMonetaryAccount *LabelMonetaryAccount `json:"alias_monetary_account,omitempty"`
 }
 
 type ExportStatementCreateParams struct {
@@ -1504,8 +1504,8 @@ type Fulfillment struct {
 type MonetaryAccountBudget struct{}
 
 type CoOwnerInviteResponse struct {
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterAlias *MonetaryAccountReference `json:"counter_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterAlias *LabelMonetaryAccount `json:"counter_alias,omitempty"`
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	MonetaryAccountType string `json:"monetary_account_type,omitempty"`
 	Status string `json:"status,omitempty"`
@@ -2851,7 +2851,7 @@ type PaymentAutoAllocateDefinition struct {
 	ID int `json:"id,omitempty"`
 	Created string `json:"created,omitempty"`
 	Updated string `json:"updated,omitempty"`
-	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	Amount *Amount `json:"amount,omitempty"`
 	Fraction FlexFloat64 `json:"fraction,omitempty"`
@@ -2933,13 +2933,13 @@ type PaymentServiceProviderIssuerTransaction struct {
 	Created string `json:"created,omitempty"`
 	Updated string `json:"updated,omitempty"`
 	PublicUUID string `json:"public_uuid,omitempty"`
-	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Amount *Amount `json:"amount,omitempty"`
 	Description string `json:"description,omitempty"`
 	URLRedirect string `json:"url_redirect,omitempty"`
 	TimeExpiry string `json:"time_expiry,omitempty"`
 	Status string `json:"status,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
 }
 
 type PaymentServiceProviderIssuerTransactionCreateParams struct {
@@ -2998,8 +2998,8 @@ type TokenQrRequestIdeal struct {
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	AmountInquired *Amount `json:"amount_inquired,omitempty"`
 	AmountResponded *Amount `json:"amount_responded,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	Attachment []*Attachment `json:"attachment,omitempty"`
 	Status string `json:"status,omitempty"`
@@ -3133,7 +3133,7 @@ type WhitelistSddOneOff struct {
 	Type string `json:"type,omitempty"`
 	Status string `json:"status,omitempty"`
 	CreditSchemeIdentifier string `json:"credit_scheme_identifier,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	MaximumAmountPerMonth *Amount `json:"maximum_amount_per_month,omitempty"`
 	MaximumAmountPerPayment *Amount `json:"maximum_amount_per_payment,omitempty"`
 	UserAliasCreated *LabelUser `json:"user_alias_created,omitempty"`
@@ -3164,7 +3164,7 @@ type WhitelistSddRecurring struct {
 	Status string `json:"status,omitempty"`
 	CreditSchemeIdentifier string `json:"credit_scheme_identifier,omitempty"`
 	MandateIdentifier string `json:"mandate_identifier,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	MaximumAmountPerMonth *Amount `json:"maximum_amount_per_month,omitempty"`
 	MaximumAmountPerPayment *Amount `json:"maximum_amount_per_payment,omitempty"`
 	UserAliasCreated *LabelUser `json:"user_alias_created,omitempty"`
@@ -3195,7 +3195,7 @@ type WhitelistSdd struct {
 	Status string `json:"status,omitempty"`
 	CreditSchemeIdentifier string `json:"credit_scheme_identifier,omitempty"`
 	MandateIdentifier string `json:"mandate_identifier,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	MaximumAmountPerMonth *Amount `json:"maximum_amount_per_month,omitempty"`
 	UserAliasCreated *LabelUser `json:"user_alias_created,omitempty"`
 }
@@ -3208,7 +3208,7 @@ type WhitelistSddMonetaryAccountPaying struct {
 	Status string `json:"status,omitempty"`
 	CreditSchemeIdentifier string `json:"credit_scheme_identifier,omitempty"`
 	MandateIdentifier string `json:"mandate_identifier,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	MaximumAmountPerMonth *Amount `json:"maximum_amount_per_month,omitempty"`
 	UserAliasCreated *LabelUser `json:"user_alias_created,omitempty"`
 }
@@ -3219,8 +3219,8 @@ type MasterCardPayment struct {
 	Updated string `json:"updated,omitempty"`
 	MonetaryAccountID int `json:"monetary_account_id,omitempty"`
 	Amount *Amount `json:"amount,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	Type string `json:"type,omitempty"`
 	SubType string `json:"sub_type,omitempty"`
@@ -3252,7 +3252,7 @@ type MasterCardIdentityCheckChallengeRequestUser struct {
 	DecisionDescription string `json:"decision_description,omitempty"`
 	DecisionDescriptionTranslated string `json:"decision_description_translated,omitempty"`
 	URLMerchantApp string `json:"url_merchant_app,omitempty"`
-	CounterpartyAlias *MonetaryAccountReference `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	EventID int `json:"event_id,omitempty"`
 	CardID int `json:"card_id,omitempty"`
 }

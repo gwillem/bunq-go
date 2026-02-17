@@ -36,7 +36,7 @@ type LabelMonetaryAccount struct {
 	Avatar *Avatar `json:"avatar,omitempty"`
 	LabelUser *LabelUser `json:"label_user,omitempty"`
 	Country string `json:"country,omitempty"`
-	BunqMe *MonetaryAccountReference `json:"bunq_me,omitempty"`
+	BunqMe *LabelMonetaryAccount `json:"bunq_me,omitempty"`
 	IsLight bool `json:"is_light,omitempty"`
 	SwiftBic string `json:"swift_bic,omitempty"`
 	SwiftAccountNumber string `json:"swift_account_number,omitempty"`
@@ -106,10 +106,10 @@ type AttachmentMonetaryAccountPayment struct {
 }
 
 type Geolocation struct {
-	Latitude string `json:"latitude,omitempty"`
-	Longitude string `json:"longitude,omitempty"`
-	Altitude string `json:"altitude,omitempty"`
-	Radius string `json:"radius,omitempty"`
+	Latitude FlexFloat64 `json:"latitude,omitempty"`
+	Longitude FlexFloat64 `json:"longitude,omitempty"`
+	Altitude FlexFloat64 `json:"altitude,omitempty"`
+	Radius FlexFloat64 `json:"radius,omitempty"`
 }
 
 type Error struct {
@@ -202,8 +202,8 @@ type DraftPaymentResponse struct {
 type DraftPaymentEntry struct {
 	ID int `json:"id,omitempty"`
 	Amount *Amount `json:"amount,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	MerchantReference string `json:"merchant_reference,omitempty"`
 	Type string `json:"type,omitempty"`
@@ -248,10 +248,10 @@ type EventObject struct {
 
 type SchedulePaymentEntry struct {
 	Amount *Amount `json:"amount,omitempty"`
-	Alias *MonetaryAccountReference `json:"alias,omitempty"`
-	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
+	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
+	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
-	Attachment []*BunqId `json:"attachment,omitempty"`
+	Attachment []*AttachmentMonetaryAccountPayment `json:"attachment,omitempty"`
 	MerchantReference string `json:"merchant_reference,omitempty"`
 }
 
@@ -311,24 +311,24 @@ type ShareDetail struct {
 }
 
 type ShareDetailPayment struct {
-	MakePayments *bool `json:"make_payments,omitempty"`
-	MakeDraftPayments *bool `json:"make_draft_payments,omitempty"`
-	ViewBalance *bool `json:"view_balance,omitempty"`
-	ViewOldEvents *bool `json:"view_old_events,omitempty"`
-	ViewNewEvents *bool `json:"view_new_events,omitempty"`
+	MakePayments bool `json:"make_payments,omitempty"`
+	MakeDraftPayments bool `json:"make_draft_payments,omitempty"`
+	ViewBalance bool `json:"view_balance,omitempty"`
+	ViewOldEvents bool `json:"view_old_events,omitempty"`
+	ViewNewEvents bool `json:"view_new_events,omitempty"`
 }
 
 type ShareDetailReadOnly struct {
-	ViewBalance *bool `json:"view_balance,omitempty"`
-	ViewOldEvents *bool `json:"view_old_events,omitempty"`
-	ViewNewEvents *bool `json:"view_new_events,omitempty"`
+	ViewBalance bool `json:"view_balance,omitempty"`
+	ViewOldEvents bool `json:"view_old_events,omitempty"`
+	ViewNewEvents bool `json:"view_new_events,omitempty"`
 }
 
 type ShareDetailDraftPayment struct {
-	MakeDraftPayments *bool `json:"make_draft_payments,omitempty"`
-	ViewBalance *bool `json:"view_balance,omitempty"`
-	ViewOldEvents *bool `json:"view_old_events,omitempty"`
-	ViewNewEvents *bool `json:"view_new_events,omitempty"`
+	MakeDraftPayments bool `json:"make_draft_payments,omitempty"`
+	ViewBalance bool `json:"view_balance,omitempty"`
+	ViewOldEvents bool `json:"view_old_events,omitempty"`
+	ViewNewEvents bool `json:"view_new_events,omitempty"`
 }
 
 type MonetaryAccountProfileFill struct {
@@ -347,7 +347,7 @@ type MonetaryAccountProfileDrain struct {
 	Status string `json:"status,omitempty"`
 	BalancePreferred *Amount `json:"balance_preferred,omitempty"`
 	BalanceThresholdHigh *Amount `json:"balance_threshold_high,omitempty"`
-	SavingsAccountAlias *Pointer `json:"savings_account_alias,omitempty"`
+	SavingsAccountAlias *LabelMonetaryAccount `json:"savings_account_alias,omitempty"`
 }
 
 type MonetaryAccountSetting struct {
@@ -359,7 +359,7 @@ type MonetaryAccountSetting struct {
 }
 
 type CoOwner struct {
-	Alias *Pointer `json:"alias,omitempty"`
+	Alias *LabelUser `json:"alias,omitempty"`
 	Status string `json:"status,omitempty"`
 }
 

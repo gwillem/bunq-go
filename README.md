@@ -34,21 +34,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// List accounts
-	accounts, err := client.MonetaryAccount.List(ctx, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, a := range accounts.Items {
+	// List accounts (auto-paginates)
+	for a, err := range client.MonetaryAccount.List(ctx, nil) {
+		if err != nil {
+			log.Fatal(err)
+		}
 		fmt.Printf("Account %d: %s %s\n", a.ID, a.Balance.Value, a.Balance.Currency)
 	}
 
-	// Show last 5 transactions
-	payments, err := client.Payment.List(ctx, 0, &bunq.ListOptions{Count: 5})
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, p := range payments.Items {
+	// Show last 5 transactions (auto-paginates)
+	for p, err := range client.Payment.List(ctx, 0, &bunq.ListOptions{Count: 5}) {
+		if err != nil {
+			log.Fatal(err)
+		}
 		fmt.Printf("%s | %s %s | %s\n", p.Created, p.Amount.Value, p.Amount.Currency, p.Description)
 	}
 

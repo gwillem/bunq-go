@@ -43,11 +43,10 @@ func main() {
 
 	// 3. List accounts
 	fmt.Println("\n=== Listing monetary accounts ===")
-	accounts, err := client.MonetaryAccountBank.List(ctx, nil)
-	if err != nil {
-		log.Fatalf("Listing accounts: %v", err)
-	}
-	for _, a := range accounts.Items {
+	for a, err := range client.MonetaryAccountBank.List(ctx, nil) {
+		if err != nil {
+			log.Fatalf("Listing accounts: %v", err)
+		}
 		balance := "n/a"
 		if a.Balance != nil {
 			balance = a.Balance.Value + " " + a.Balance.Currency
@@ -76,11 +75,10 @@ func main() {
 
 	// 5. Check balance after funding
 	fmt.Println("\n=== Checking balance after funding ===")
-	accounts, err = client.MonetaryAccountBank.List(ctx, nil)
-	if err != nil {
-		log.Fatalf("Listing accounts: %v", err)
-	}
-	for _, a := range accounts.Items {
+	for a, err := range client.MonetaryAccountBank.List(ctx, nil) {
+		if err != nil {
+			log.Fatalf("Listing accounts: %v", err)
+		}
 		balance := "n/a"
 		if a.Balance != nil {
 			balance = a.Balance.Value + " " + a.Balance.Currency
@@ -120,30 +118,28 @@ func main() {
 
 	// 8. List last 5 payments
 	fmt.Println("\n=== Last 5 payments ===")
-	payments, err := client.Payment.List(ctx, 0, &bunq.ListOptions{Count: 5})
-	if err != nil {
-		log.Fatalf("Listing payments: %v", err)
-	}
-	for i, p := range payments.Items {
+	i := 0
+	for p, err := range client.Payment.List(ctx, 0, &bunq.ListOptions{Count: 5}) {
+		if err != nil {
+			log.Fatalf("Listing payments: %v", err)
+		}
+		i++
 		fmt.Printf("  %d. [%d] %s %s - %s (%s)\n",
-			i+1, p.ID, p.Amount.Value, p.Amount.Currency, p.Description, p.Created)
-	}
-	if payments.Pagination != nil {
-		fmt.Printf("  Pagination: older_id=%v newer_id=%v\n",
-			payments.Pagination.OlderID, payments.Pagination.NewerID)
+			i, p.ID, p.Amount.Value, p.Amount.Currency, p.Description, p.Created)
 	}
 
 	// 9. List cards
 	fmt.Println("\n=== Listing cards ===")
-	cards, err := client.Card.List(ctx, nil)
-	if err != nil {
-		log.Fatalf("Listing cards: %v", err)
-	}
-	if len(cards.Items) == 0 {
-		fmt.Println("  No cards found")
-	}
-	for _, c := range cards.Items {
+	cardCount := 0
+	for c, err := range client.Card.List(ctx, nil) {
+		if err != nil {
+			log.Fatalf("Listing cards: %v", err)
+		}
+		cardCount++
 		fmt.Printf("  Card %d: %s %s (status: %s)\n", c.ID, c.Type, c.SubType, c.Status)
+	}
+	if cardCount == 0 {
+		fmt.Println("  No cards found")
 	}
 
 	fmt.Println("\n=== Done ===")

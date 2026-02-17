@@ -5,28 +5,21 @@ package bunq
 import (
 	"context"
 	"fmt"
+	"iter"
 )
 
 type BillingContractSubscriptionService struct{ *service }
 
-func (s *BillingContractSubscriptionService) List(ctx context.Context, opts *ListOptions) (*ListResponse[BillingContractSubscription], error) {
+func (s *BillingContractSubscriptionService) List(ctx context.Context, opts *ListOptions) iter.Seq2[BillingContractSubscription, error] {
 	path := fmt.Sprintf("user/%d/billing-contract-subscription", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[BillingContractSubscription](body, "BillingContractSubscription")
+	return listIter[BillingContractSubscription](s.client, ctx, path, "BillingContractSubscription", opts)
 }
 
 type CustomerLimitService struct{ *service }
 
-func (s *CustomerLimitService) List(ctx context.Context, opts *ListOptions) (*ListResponse[CustomerLimit], error) {
+func (s *CustomerLimitService) List(ctx context.Context, opts *ListOptions) iter.Seq2[CustomerLimit, error] {
 	path := fmt.Sprintf("user/%d/limit", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[CustomerLimit](body, "CustomerLimit")
+	return listIter[CustomerLimit](s.client, ctx, path, "CustomerLimit", opts)
 }
 
 type InvoiceExportPdfService struct{ *service }
@@ -65,13 +58,9 @@ func (s *InvoiceExportPdfService) Delete(ctx context.Context, invoiceID int, inv
 
 type InvoiceExportPdfContentService struct{ *service }
 
-func (s *InvoiceExportPdfContentService) List(ctx context.Context, invoiceID int, opts *ListOptions) (*ListResponse[InvoiceExportPdfContent], error) {
+func (s *InvoiceExportPdfContentService) List(ctx context.Context, invoiceID int, opts *ListOptions) iter.Seq2[InvoiceExportPdfContent, error] {
 	path := fmt.Sprintf("user/%d/invoice/%d/pdf-content", s.client.userID, invoiceID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[InvoiceExportPdfContent](body, "InvoiceExportPdfContent")
+	return listIter[InvoiceExportPdfContent](s.client, ctx, path, "InvoiceExportPdfContent", opts)
 }
 
 type InvoiceService struct{ *service }
@@ -85,13 +74,9 @@ func (s *InvoiceService) Get(ctx context.Context, monetaryAccountID int, invoice
 	return unmarshalObject[Invoice](body, "Invoice")
 }
 
-func (s *InvoiceService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[Invoice], error) {
+func (s *InvoiceService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[Invoice, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/invoice", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[Invoice](body, "Invoice")
+	return listIter[Invoice](s.client, ctx, path, "Invoice", opts)
 }
 
 type InvoiceByUserService struct{ *service }
@@ -105,24 +90,16 @@ func (s *InvoiceByUserService) Get(ctx context.Context, invoiceID int) (*Invoice
 	return unmarshalObject[InvoiceByUser](body, "Invoice")
 }
 
-func (s *InvoiceByUserService) List(ctx context.Context, opts *ListOptions) (*ListResponse[InvoiceByUser], error) {
+func (s *InvoiceByUserService) List(ctx context.Context, opts *ListOptions) iter.Seq2[InvoiceByUser, error] {
 	path := fmt.Sprintf("user/%d/invoice", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[InvoiceByUser](body, "Invoice")
+	return listIter[InvoiceByUser](s.client, ctx, path, "Invoice", opts)
 }
 
 type AdditionalTransactionInformationCategoryService struct{ *service }
 
-func (s *AdditionalTransactionInformationCategoryService) List(ctx context.Context, opts *ListOptions) (*ListResponse[AdditionalTransactionInformationCategory], error) {
+func (s *AdditionalTransactionInformationCategoryService) List(ctx context.Context, opts *ListOptions) iter.Seq2[AdditionalTransactionInformationCategory, error] {
 	path := fmt.Sprintf("user/%d/additional-transaction-information-category", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[AdditionalTransactionInformationCategory](body, "AdditionalTransactionInformationCategory")
+	return listIter[AdditionalTransactionInformationCategory](s.client, ctx, path, "AdditionalTransactionInformationCategory", opts)
 }
 
 type AdditionalTransactionInformationCategoryUserDefinedService struct{ *service }
@@ -138,46 +115,30 @@ func (s *AdditionalTransactionInformationCategoryUserDefinedService) Create(ctx 
 
 type AttachmentConversationContentService struct{ *service }
 
-func (s *AttachmentConversationContentService) List(ctx context.Context, chatConversationID int, attachmentID int, opts *ListOptions) (*ListResponse[AttachmentConversationContent], error) {
+func (s *AttachmentConversationContentService) List(ctx context.Context, chatConversationID int, attachmentID int, opts *ListOptions) iter.Seq2[AttachmentConversationContent, error] {
 	path := fmt.Sprintf("user/%d/chat-conversation/%d/attachment/%d/content", s.client.userID, chatConversationID, attachmentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[AttachmentConversationContent](body, "AttachmentConversationContent")
+	return listIter[AttachmentConversationContent](s.client, ctx, path, "AttachmentConversationContent", opts)
 }
 
 type AttachmentMonetaryAccountContentService struct{ *service }
 
-func (s *AttachmentMonetaryAccountContentService) List(ctx context.Context, monetaryAccountID int, attachmentID int, opts *ListOptions) (*ListResponse[AttachmentMonetaryAccountContent], error) {
+func (s *AttachmentMonetaryAccountContentService) List(ctx context.Context, monetaryAccountID int, attachmentID int, opts *ListOptions) iter.Seq2[AttachmentMonetaryAccountContent, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/attachment/%d/content", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), attachmentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[AttachmentMonetaryAccountContent](body, "AttachmentMonetaryAccountContent")
+	return listIter[AttachmentMonetaryAccountContent](s.client, ctx, path, "AttachmentMonetaryAccountContent", opts)
 }
 
 type AttachmentPublicContentService struct{ *service }
 
-func (s *AttachmentPublicContentService) List(ctx context.Context, attachmentPublicID string, opts *ListOptions) (*ListResponse[AttachmentPublicContent], error) {
+func (s *AttachmentPublicContentService) List(ctx context.Context, attachmentPublicID string, opts *ListOptions) iter.Seq2[AttachmentPublicContent, error] {
 	path := fmt.Sprintf("attachment-public/%s/content", attachmentPublicID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[AttachmentPublicContent](body, "AttachmentPublicContent")
+	return listIter[AttachmentPublicContent](s.client, ctx, path, "AttachmentPublicContent", opts)
 }
 
 type AttachmentUserContentService struct{ *service }
 
-func (s *AttachmentUserContentService) List(ctx context.Context, attachmentID int, opts *ListOptions) (*ListResponse[AttachmentUserContent], error) {
+func (s *AttachmentUserContentService) List(ctx context.Context, attachmentID int, opts *ListOptions) iter.Seq2[AttachmentUserContent, error] {
 	path := fmt.Sprintf("user/%d/attachment/%d/content", s.client.userID, attachmentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[AttachmentUserContent](body, "AttachmentUserContent")
+	return listIter[AttachmentUserContent](s.client, ctx, path, "AttachmentUserContent", opts)
 }
 
 type AttachmentMonetaryAccountService struct{ *service }
@@ -273,13 +234,9 @@ func (s *PaymentService) Get(ctx context.Context, monetaryAccountID int, payment
 	return unmarshalObject[Payment](body, "Payment")
 }
 
-func (s *PaymentService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[Payment], error) {
+func (s *PaymentService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[Payment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[Payment](body, "Payment")
+	return listIter[Payment](s.client, ctx, path, "Payment", opts)
 }
 
 type PaymentAutoAllocateInstanceService struct{ *service }
@@ -293,13 +250,9 @@ func (s *PaymentAutoAllocateInstanceService) Get(ctx context.Context, monetaryAc
 	return unmarshalObject[PaymentAutoAllocateInstance](body, "PaymentAutoAllocateInstance")
 }
 
-func (s *PaymentAutoAllocateInstanceService) List(ctx context.Context, monetaryAccountID int, paymentAutoAllocateID int, opts *ListOptions) (*ListResponse[PaymentAutoAllocateInstance], error) {
+func (s *PaymentAutoAllocateInstanceService) List(ctx context.Context, monetaryAccountID int, paymentAutoAllocateID int, opts *ListOptions) iter.Seq2[PaymentAutoAllocateInstance, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment-auto-allocate/%d/instance", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), paymentAutoAllocateID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[PaymentAutoAllocateInstance](body, "PaymentAutoAllocateInstance")
+	return listIter[PaymentAutoAllocateInstance](s.client, ctx, path, "PaymentAutoAllocateInstance", opts)
 }
 
 type PaymentBatchService struct{ *service }
@@ -322,13 +275,9 @@ func (s *PaymentBatchService) Get(ctx context.Context, monetaryAccountID int, pa
 	return unmarshalObject[PaymentBatch](body, "PaymentBatch")
 }
 
-func (s *PaymentBatchService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[PaymentBatch], error) {
+func (s *PaymentBatchService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[PaymentBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment-batch", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[PaymentBatch](body, "PaymentBatch")
+	return listIter[PaymentBatch](s.client, ctx, path, "PaymentBatch", opts)
 }
 
 func (s *PaymentBatchService) Update(ctx context.Context, monetaryAccountID int, paymentBatchID int, params PaymentBatchUpdateParams) (int, error) {
@@ -351,13 +300,9 @@ func (s *BunqMeFundraiserProfileUserService) Get(ctx context.Context, bunqmeFund
 	return unmarshalObject[BunqMeFundraiserProfileUser](body, "BunqMeFundraiserProfile")
 }
 
-func (s *BunqMeFundraiserProfileUserService) List(ctx context.Context, opts *ListOptions) (*ListResponse[BunqMeFundraiserProfileUser], error) {
+func (s *BunqMeFundraiserProfileUserService) List(ctx context.Context, opts *ListOptions) iter.Seq2[BunqMeFundraiserProfileUser, error] {
 	path := fmt.Sprintf("user/%d/bunqme-fundraiser-profile", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[BunqMeFundraiserProfileUser](body, "BunqMeFundraiserProfile")
+	return listIter[BunqMeFundraiserProfileUser](s.client, ctx, path, "BunqMeFundraiserProfile", opts)
 }
 
 type BunqMeFundraiserResultService struct{ *service }
@@ -402,13 +347,9 @@ func (s *BunqMeTabService) Get(ctx context.Context, monetaryAccountID int, bunqm
 	return unmarshalObject[BunqMeTab](body, "BunqMeTab")
 }
 
-func (s *BunqMeTabService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[BunqMeTab], error) {
+func (s *BunqMeTabService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[BunqMeTab, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/bunqme-tab", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[BunqMeTab](body, "BunqMeTab")
+	return listIter[BunqMeTab](s.client, ctx, path, "BunqMeTab", opts)
 }
 
 func (s *BunqMeTabService) Update(ctx context.Context, monetaryAccountID int, bunqmeTabID int, params BunqMeTabUpdateParams) (int, error) {
@@ -473,13 +414,9 @@ func (s *CardGeneratedCvc2Service) Get(ctx context.Context, cardID int, generate
 	return unmarshalObject[CardGeneratedCvc2](body, "CardGeneratedCvc2")
 }
 
-func (s *CardGeneratedCvc2Service) List(ctx context.Context, cardID int, opts *ListOptions) (*ListResponse[CardGeneratedCvc2], error) {
+func (s *CardGeneratedCvc2Service) List(ctx context.Context, cardID int, opts *ListOptions) iter.Seq2[CardGeneratedCvc2, error] {
 	path := fmt.Sprintf("user/%d/card/%d/generated-cvc2", s.client.userID, cardID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[CardGeneratedCvc2](body, "CardGeneratedCvc2")
+	return listIter[CardGeneratedCvc2](s.client, ctx, path, "CardGeneratedCvc2", opts)
 }
 
 func (s *CardGeneratedCvc2Service) Update(ctx context.Context, cardID int, generatedCVC2ID int, params CardGeneratedCvc2UpdateParams) (int, error) {
@@ -504,13 +441,9 @@ func (s *CardDebitService) Create(ctx context.Context, params CardDebitCreatePar
 
 type CardNameService struct{ *service }
 
-func (s *CardNameService) List(ctx context.Context, opts *ListOptions) (*ListResponse[CardName], error) {
+func (s *CardNameService) List(ctx context.Context, opts *ListOptions) iter.Seq2[CardName, error] {
 	path := fmt.Sprintf("user/%d/card-name", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[CardName](body, "CardUserNameArray")
+	return listIter[CardName](s.client, ctx, path, "CardUserNameArray", opts)
 }
 
 type CardReplaceService struct{ *service }
@@ -535,13 +468,9 @@ func (s *CardService) Get(ctx context.Context, cardID int) (*Card, error) {
 	return unmarshalObject[Card](body, "Card")
 }
 
-func (s *CardService) List(ctx context.Context, opts *ListOptions) (*ListResponse[Card], error) {
+func (s *CardService) List(ctx context.Context, opts *ListOptions) iter.Seq2[Card, error] {
 	path := fmt.Sprintf("user/%d/card", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[Card](body, "Card")
+	return listIter[Card](s.client, ctx, path, "Card", opts)
 }
 
 func (s *CardService) Update(ctx context.Context, cardID int, params CardUpdateParams) (*Card, error) {
@@ -573,13 +502,9 @@ func (s *CertificatePinnedService) Get(ctx context.Context, certificatePinnedID 
 	return unmarshalObject[CertificatePinned](body, "CertificatePinned")
 }
 
-func (s *CertificatePinnedService) List(ctx context.Context, opts *ListOptions) (*ListResponse[CertificatePinned], error) {
+func (s *CertificatePinnedService) List(ctx context.Context, opts *ListOptions) iter.Seq2[CertificatePinned, error] {
 	path := fmt.Sprintf("user/%d/certificate-pinned", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[CertificatePinned](body, "CertificatePinned")
+	return listIter[CertificatePinned](s.client, ctx, path, "CertificatePinned", opts)
 }
 
 func (s *CertificatePinnedService) Delete(ctx context.Context, certificatePinnedID int) error {
@@ -618,13 +543,9 @@ func (s *CompanyService) Get(ctx context.Context, companyID int) (*Company, erro
 	return unmarshalObject[Company](body, "UserCompany")
 }
 
-func (s *CompanyService) List(ctx context.Context, opts *ListOptions) (*ListResponse[Company], error) {
+func (s *CompanyService) List(ctx context.Context, opts *ListOptions) iter.Seq2[Company, error] {
 	path := fmt.Sprintf("user/%d/company", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[Company](body, "UserCompany")
+	return listIter[Company](s.client, ctx, path, "UserCompany", opts)
 }
 
 func (s *CompanyService) Update(ctx context.Context, companyID int, params CompanyUpdateParams) (int, error) {
@@ -669,13 +590,9 @@ func (s *ConfirmationOfFundsService) Create(ctx context.Context, params Confirma
 
 type CurrencyCloudBeneficiaryRequirementService struct{ *service }
 
-func (s *CurrencyCloudBeneficiaryRequirementService) List(ctx context.Context, opts *ListOptions) (*ListResponse[CurrencyCloudBeneficiaryRequirement], error) {
+func (s *CurrencyCloudBeneficiaryRequirementService) List(ctx context.Context, opts *ListOptions) iter.Seq2[CurrencyCloudBeneficiaryRequirement, error] {
 	path := fmt.Sprintf("user/%d/currency-cloud-beneficiary-requirement", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[CurrencyCloudBeneficiaryRequirement](body, "CurrencyCloudBeneficiaryRequirement")
+	return listIter[CurrencyCloudBeneficiaryRequirement](s.client, ctx, path, "CurrencyCloudBeneficiaryRequirement", opts)
 }
 
 type CurrencyCloudBeneficiaryService struct{ *service }
@@ -698,13 +615,9 @@ func (s *CurrencyCloudBeneficiaryService) Get(ctx context.Context, currencyCloud
 	return unmarshalObject[CurrencyCloudBeneficiary](body, "CurrencyCloudBeneficiary")
 }
 
-func (s *CurrencyCloudBeneficiaryService) List(ctx context.Context, opts *ListOptions) (*ListResponse[CurrencyCloudBeneficiary], error) {
+func (s *CurrencyCloudBeneficiaryService) List(ctx context.Context, opts *ListOptions) iter.Seq2[CurrencyCloudBeneficiary, error] {
 	path := fmt.Sprintf("user/%d/currency-cloud-beneficiary", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[CurrencyCloudBeneficiary](body, "CurrencyCloudBeneficiary")
+	return listIter[CurrencyCloudBeneficiary](s.client, ctx, path, "CurrencyCloudBeneficiary", opts)
 }
 
 type CurrencyCloudPaymentQuoteService struct{ *service }
@@ -758,13 +671,9 @@ func (s *CurrencyConversionService) Get(ctx context.Context, monetaryAccountID i
 	return unmarshalObject[CurrencyConversion](body, "CurrencyConversion")
 }
 
-func (s *CurrencyConversionService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[CurrencyConversion], error) {
+func (s *CurrencyConversionService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[CurrencyConversion, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/currency-conversion", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[CurrencyConversion](body, "CurrencyConversion")
+	return listIter[CurrencyConversion](s.client, ctx, path, "CurrencyConversion", opts)
 }
 
 type DeviceServerService struct{ *service }
@@ -787,13 +696,9 @@ func (s *DeviceServerService) Get(ctx context.Context, deviceServerID int) (*Dev
 	return unmarshalObject[DeviceServer](body, "DeviceServer")
 }
 
-func (s *DeviceServerService) List(ctx context.Context, opts *ListOptions) (*ListResponse[DeviceServer], error) {
+func (s *DeviceServerService) List(ctx context.Context, opts *ListOptions) iter.Seq2[DeviceServer, error] {
 	path := "device-server"
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[DeviceServer](body, "DeviceServer")
+	return listIter[DeviceServer](s.client, ctx, path, "DeviceServer", opts)
 }
 
 type DeviceService struct{ *service }
@@ -807,13 +712,9 @@ func (s *DeviceService) Get(ctx context.Context, deviceID int) (*Device, error) 
 	return unmarshalObject[Device](body, "Device")
 }
 
-func (s *DeviceService) List(ctx context.Context, opts *ListOptions) (*ListResponse[Device], error) {
+func (s *DeviceService) List(ctx context.Context, opts *ListOptions) iter.Seq2[Device, error] {
 	path := "device"
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[Device](body, "Device")
+	return listIter[Device](s.client, ctx, path, "Device", opts)
 }
 
 type DraftPaymentService struct{ *service }
@@ -836,13 +737,9 @@ func (s *DraftPaymentService) Get(ctx context.Context, monetaryAccountID int, dr
 	return unmarshalObject[DraftPayment](body, "DraftPayment")
 }
 
-func (s *DraftPaymentService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[DraftPayment], error) {
+func (s *DraftPaymentService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[DraftPayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/draft-payment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[DraftPayment](body, "DraftPayment")
+	return listIter[DraftPayment](s.client, ctx, path, "DraftPayment", opts)
 }
 
 func (s *DraftPaymentService) Update(ctx context.Context, monetaryAccountID int, draftPaymentID int, params DraftPaymentUpdateParams) (int, error) {
@@ -865,13 +762,9 @@ func (s *ScheduleService) Get(ctx context.Context, monetaryAccountID int, schedu
 	return unmarshalObject[Schedule](body, "Schedule")
 }
 
-func (s *ScheduleService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[Schedule], error) {
+func (s *ScheduleService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[Schedule, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[Schedule](body, "Schedule")
+	return listIter[Schedule](s.client, ctx, path, "Schedule", opts)
 }
 
 type ServerErrorService struct{ *service }
@@ -896,13 +789,9 @@ func (s *EventService) Get(ctx context.Context, eventID int) (*Event, error) {
 	return unmarshalObject[Event](body, "Event")
 }
 
-func (s *EventService) List(ctx context.Context, opts *ListOptions) (*ListResponse[Event], error) {
+func (s *EventService) List(ctx context.Context, opts *ListOptions) iter.Seq2[Event, error] {
 	path := fmt.Sprintf("user/%d/event", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[Event](body, "Event")
+	return listIter[Event](s.client, ctx, path, "Event", opts)
 }
 
 type FeatureAnnouncementService struct{ *service }
@@ -936,13 +825,9 @@ func (s *IdealMerchantTransactionService) Get(ctx context.Context, monetaryAccou
 	return unmarshalObject[IdealMerchantTransaction](body, "IdealMerchantTransaction")
 }
 
-func (s *IdealMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[IdealMerchantTransaction], error) {
+func (s *IdealMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[IdealMerchantTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/ideal-merchant-transaction", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[IdealMerchantTransaction](body, "IdealMerchantTransaction")
+	return listIter[IdealMerchantTransaction](s.client, ctx, path, "IdealMerchantTransaction", opts)
 }
 
 type SchedulePaymentService struct{ *service }
@@ -965,13 +850,9 @@ func (s *SchedulePaymentService) Get(ctx context.Context, monetaryAccountID int,
 	return unmarshalObject[SchedulePayment](body, "ScheduledPayment")
 }
 
-func (s *SchedulePaymentService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[SchedulePayment], error) {
+func (s *SchedulePaymentService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[SchedulePayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-payment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[SchedulePayment](body, "ScheduledPayment")
+	return listIter[SchedulePayment](s.client, ctx, path, "ScheduledPayment", opts)
 }
 
 func (s *SchedulePaymentService) Update(ctx context.Context, monetaryAccountID int, schedulePaymentID int, params SchedulePaymentUpdateParams) (*SchedulePayment, error) {
@@ -1033,13 +914,9 @@ func (s *ScheduleInstanceService) Get(ctx context.Context, monetaryAccountID int
 	return unmarshalObject[ScheduleInstance](body, "ScheduledInstance")
 }
 
-func (s *ScheduleInstanceService) List(ctx context.Context, monetaryAccountID int, scheduleID int, opts *ListOptions) (*ListResponse[ScheduleInstance], error) {
+func (s *ScheduleInstanceService) List(ctx context.Context, monetaryAccountID int, scheduleID int, opts *ListOptions) iter.Seq2[ScheduleInstance, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule/%d/schedule-instance", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), scheduleID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ScheduleInstance](body, "ScheduledInstance")
+	return listIter[ScheduleInstance](s.client, ctx, path, "ScheduledInstance", opts)
 }
 
 func (s *ScheduleInstanceService) Update(ctx context.Context, monetaryAccountID int, scheduleID int, scheduleInstanceID int, params ScheduleInstanceUpdateParams) (int, error) {
@@ -1062,13 +939,9 @@ func (s *MasterCardActionService) Get(ctx context.Context, monetaryAccountID int
 	return unmarshalObject[MasterCardAction](body, "MasterCardAction")
 }
 
-func (s *MasterCardActionService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[MasterCardAction], error) {
+func (s *MasterCardActionService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[MasterCardAction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/mastercard-action", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MasterCardAction](body, "MasterCardAction")
+	return listIter[MasterCardAction](s.client, ctx, path, "MasterCardAction", opts)
 }
 
 type RequestInquiryBatchService struct{ *service }
@@ -1091,13 +964,9 @@ func (s *RequestInquiryBatchService) Get(ctx context.Context, monetaryAccountID 
 	return unmarshalObject[RequestInquiryBatch](body, "RequestInquiryBatch")
 }
 
-func (s *RequestInquiryBatchService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[RequestInquiryBatch], error) {
+func (s *RequestInquiryBatchService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[RequestInquiryBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-inquiry-batch", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[RequestInquiryBatch](body, "RequestInquiryBatch")
+	return listIter[RequestInquiryBatch](s.client, ctx, path, "RequestInquiryBatch", opts)
 }
 
 func (s *RequestInquiryBatchService) Update(ctx context.Context, monetaryAccountID int, requestInquiryBatchID int, params RequestInquiryBatchUpdateParams) (int, error) {
@@ -1129,13 +998,9 @@ func (s *RequestInquiryService) Get(ctx context.Context, monetaryAccountID int, 
 	return unmarshalObject[RequestInquiry](body, "RequestInquiry")
 }
 
-func (s *RequestInquiryService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[RequestInquiry], error) {
+func (s *RequestInquiryService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[RequestInquiry, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-inquiry", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[RequestInquiry](body, "RequestInquiry")
+	return listIter[RequestInquiry](s.client, ctx, path, "RequestInquiry", opts)
 }
 
 func (s *RequestInquiryService) Update(ctx context.Context, monetaryAccountID int, requestInquiryID int, params RequestInquiryUpdateParams) (*RequestInquiry, error) {
@@ -1158,13 +1023,9 @@ func (s *RequestResponseService) Get(ctx context.Context, monetaryAccountID int,
 	return unmarshalObject[RequestResponse](body, "RequestResponse")
 }
 
-func (s *RequestResponseService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[RequestResponse], error) {
+func (s *RequestResponseService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[RequestResponse, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-response", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[RequestResponse](body, "RequestResponse")
+	return listIter[RequestResponse](s.client, ctx, path, "RequestResponse", opts)
 }
 
 func (s *RequestResponseService) Update(ctx context.Context, monetaryAccountID int, requestResponseID int, params RequestResponseUpdateParams) (*RequestResponse, error) {
@@ -1196,13 +1057,9 @@ func (s *TransferwiseTransferService) Get(ctx context.Context, transferwiseQuote
 	return unmarshalObject[TransferwiseTransfer](body, "TransferwisePayment")
 }
 
-func (s *TransferwiseTransferService) List(ctx context.Context, transferwiseQuoteID int, opts *ListOptions) (*ListResponse[TransferwiseTransfer], error) {
+func (s *TransferwiseTransferService) List(ctx context.Context, transferwiseQuoteID int, opts *ListOptions) iter.Seq2[TransferwiseTransfer, error] {
 	path := fmt.Sprintf("user/%d/transferwise-quote/%d/transferwise-transfer", s.client.userID, transferwiseQuoteID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[TransferwiseTransfer](body, "TransferwisePayment")
+	return listIter[TransferwiseTransfer](s.client, ctx, path, "TransferwisePayment", opts)
 }
 
 type TransferwiseQuoteService struct{ *service }
@@ -1245,13 +1102,9 @@ func (s *ShareInviteMonetaryAccountInquiryService) Get(ctx context.Context, mone
 	return unmarshalObject[ShareInviteMonetaryAccountInquiry](body, "ShareInviteMonetaryAccountInquiry")
 }
 
-func (s *ShareInviteMonetaryAccountInquiryService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[ShareInviteMonetaryAccountInquiry], error) {
+func (s *ShareInviteMonetaryAccountInquiryService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[ShareInviteMonetaryAccountInquiry, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/share-invite-monetary-account-inquiry", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ShareInviteMonetaryAccountInquiry](body, "ShareInviteMonetaryAccountInquiry")
+	return listIter[ShareInviteMonetaryAccountInquiry](s.client, ctx, path, "ShareInviteMonetaryAccountInquiry", opts)
 }
 
 func (s *ShareInviteMonetaryAccountInquiryService) Update(ctx context.Context, monetaryAccountID int, shareInviteMonetaryAccountInquiryID int, params ShareInviteMonetaryAccountInquiryUpdateParams) (int, error) {
@@ -1274,13 +1127,9 @@ func (s *ShareInviteMonetaryAccountResponseService) Get(ctx context.Context, sha
 	return unmarshalObject[ShareInviteMonetaryAccountResponse](body, "ShareInviteMonetaryAccountResponse")
 }
 
-func (s *ShareInviteMonetaryAccountResponseService) List(ctx context.Context, opts *ListOptions) (*ListResponse[ShareInviteMonetaryAccountResponse], error) {
+func (s *ShareInviteMonetaryAccountResponseService) List(ctx context.Context, opts *ListOptions) iter.Seq2[ShareInviteMonetaryAccountResponse, error] {
 	path := fmt.Sprintf("user/%d/share-invite-monetary-account-response", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ShareInviteMonetaryAccountResponse](body, "ShareInviteMonetaryAccountResponse")
+	return listIter[ShareInviteMonetaryAccountResponse](s.client, ctx, path, "ShareInviteMonetaryAccountResponse", opts)
 }
 
 func (s *ShareInviteMonetaryAccountResponseService) Update(ctx context.Context, shareInviteMonetaryAccountResponseID int, params ShareInviteMonetaryAccountResponseUpdateParams) (int, error) {
@@ -1303,24 +1152,16 @@ func (s *SofortMerchantTransactionService) Get(ctx context.Context, monetaryAcco
 	return unmarshalObject[SofortMerchantTransaction](body, "SofortMerchantTransaction")
 }
 
-func (s *SofortMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[SofortMerchantTransaction], error) {
+func (s *SofortMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[SofortMerchantTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/sofort-merchant-transaction", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[SofortMerchantTransaction](body, "SofortMerchantTransaction")
+	return listIter[SofortMerchantTransaction](s.client, ctx, path, "SofortMerchantTransaction", opts)
 }
 
 type ExportAnnualOverviewContentService struct{ *service }
 
-func (s *ExportAnnualOverviewContentService) List(ctx context.Context, exportAnnualOverviewID int, opts *ListOptions) (*ListResponse[ExportAnnualOverviewContent], error) {
+func (s *ExportAnnualOverviewContentService) List(ctx context.Context, exportAnnualOverviewID int, opts *ListOptions) iter.Seq2[ExportAnnualOverviewContent, error] {
 	path := fmt.Sprintf("user/%d/export-annual-overview/%d/content", s.client.userID, exportAnnualOverviewID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportAnnualOverviewContent](body, "ExportAnnualOverviewContent")
+	return listIter[ExportAnnualOverviewContent](s.client, ctx, path, "ExportAnnualOverviewContent", opts)
 }
 
 type ExportAnnualOverviewService struct{ *service }
@@ -1343,13 +1184,9 @@ func (s *ExportAnnualOverviewService) Get(ctx context.Context, exportAnnualOverv
 	return unmarshalObject[ExportAnnualOverview](body, "ExportAnnualOverview")
 }
 
-func (s *ExportAnnualOverviewService) List(ctx context.Context, opts *ListOptions) (*ListResponse[ExportAnnualOverview], error) {
+func (s *ExportAnnualOverviewService) List(ctx context.Context, opts *ListOptions) iter.Seq2[ExportAnnualOverview, error] {
 	path := fmt.Sprintf("user/%d/export-annual-overview", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportAnnualOverview](body, "ExportAnnualOverview")
+	return listIter[ExportAnnualOverview](s.client, ctx, path, "ExportAnnualOverview", opts)
 }
 
 func (s *ExportAnnualOverviewService) Delete(ctx context.Context, exportAnnualOverviewID int) error {
@@ -1359,13 +1196,9 @@ func (s *ExportAnnualOverviewService) Delete(ctx context.Context, exportAnnualOv
 
 type ExportRibContentService struct{ *service }
 
-func (s *ExportRibContentService) List(ctx context.Context, monetaryAccountID int, exportRibID int, opts *ListOptions) (*ListResponse[ExportRibContent], error) {
+func (s *ExportRibContentService) List(ctx context.Context, monetaryAccountID int, exportRibID int, opts *ListOptions) iter.Seq2[ExportRibContent, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/export-rib/%d/content", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), exportRibID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportRibContent](body, "ExportRibContent")
+	return listIter[ExportRibContent](s.client, ctx, path, "ExportRibContent", opts)
 }
 
 type ExportRibService struct{ *service }
@@ -1388,13 +1221,9 @@ func (s *ExportRibService) Get(ctx context.Context, monetaryAccountID int, expor
 	return unmarshalObject[ExportRib](body, "ExportRib")
 }
 
-func (s *ExportRibService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[ExportRib], error) {
+func (s *ExportRibService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[ExportRib, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/export-rib", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportRib](body, "ExportRib")
+	return listIter[ExportRib](s.client, ctx, path, "ExportRib", opts)
 }
 
 func (s *ExportRibService) Delete(ctx context.Context, monetaryAccountID int, exportRibID int) error {
@@ -1422,13 +1251,9 @@ func (s *ExportStatementCardCsvService) Get(ctx context.Context, cardID int, exp
 	return unmarshalObject[ExportStatementCardCsv](body, "ExportStatementCardCsv")
 }
 
-func (s *ExportStatementCardCsvService) List(ctx context.Context, cardID int, opts *ListOptions) (*ListResponse[ExportStatementCardCsv], error) {
+func (s *ExportStatementCardCsvService) List(ctx context.Context, cardID int, opts *ListOptions) iter.Seq2[ExportStatementCardCsv, error] {
 	path := fmt.Sprintf("user/%d/card/%d/export-statement-card-csv", s.client.userID, cardID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportStatementCardCsv](body, "ExportStatementCardCsv")
+	return listIter[ExportStatementCardCsv](s.client, ctx, path, "ExportStatementCardCsv", opts)
 }
 
 func (s *ExportStatementCardCsvService) Delete(ctx context.Context, cardID int, exportStatementCardCsvID int) error {
@@ -1456,13 +1281,9 @@ func (s *ExportStatementCardPdfService) Get(ctx context.Context, cardID int, exp
 	return unmarshalObject[ExportStatementCardPdf](body, "ExportStatementCardPdf")
 }
 
-func (s *ExportStatementCardPdfService) List(ctx context.Context, cardID int, opts *ListOptions) (*ListResponse[ExportStatementCardPdf], error) {
+func (s *ExportStatementCardPdfService) List(ctx context.Context, cardID int, opts *ListOptions) iter.Seq2[ExportStatementCardPdf, error] {
 	path := fmt.Sprintf("user/%d/card/%d/export-statement-card-pdf", s.client.userID, cardID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportStatementCardPdf](body, "ExportStatementCardPdf")
+	return listIter[ExportStatementCardPdf](s.client, ctx, path, "ExportStatementCardPdf", opts)
 }
 
 func (s *ExportStatementCardPdfService) Delete(ctx context.Context, cardID int, exportStatementCardPDFID int) error {
@@ -1481,46 +1302,30 @@ func (s *ExportStatementCardService) Get(ctx context.Context, cardID int, export
 	return unmarshalObject[ExportStatementCard](body, "ExportStatementCard")
 }
 
-func (s *ExportStatementCardService) List(ctx context.Context, cardID int, opts *ListOptions) (*ListResponse[ExportStatementCard], error) {
+func (s *ExportStatementCardService) List(ctx context.Context, cardID int, opts *ListOptions) iter.Seq2[ExportStatementCard, error] {
 	path := fmt.Sprintf("user/%d/card/%d/export-statement-card", s.client.userID, cardID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportStatementCard](body, "ExportStatementCard")
+	return listIter[ExportStatementCard](s.client, ctx, path, "ExportStatementCard", opts)
 }
 
 type ExportStatementCardContentService struct{ *service }
 
-func (s *ExportStatementCardContentService) List(ctx context.Context, cardID int, exportStatementCardID int, opts *ListOptions) (*ListResponse[ExportStatementCardContent], error) {
+func (s *ExportStatementCardContentService) List(ctx context.Context, cardID int, exportStatementCardID int, opts *ListOptions) iter.Seq2[ExportStatementCardContent, error] {
 	path := fmt.Sprintf("user/%d/card/%d/export-statement-card/%d/content", s.client.userID, cardID, exportStatementCardID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportStatementCardContent](body, "ExportStatementCardContent")
+	return listIter[ExportStatementCardContent](s.client, ctx, path, "ExportStatementCardContent", opts)
 }
 
 type ExportStatementContentService struct{ *service }
 
-func (s *ExportStatementContentService) List(ctx context.Context, monetaryAccountID int, customerStatementID int, opts *ListOptions) (*ListResponse[ExportStatementContent], error) {
+func (s *ExportStatementContentService) List(ctx context.Context, monetaryAccountID int, customerStatementID int, opts *ListOptions) iter.Seq2[ExportStatementContent, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/customer-statement/%d/content", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), customerStatementID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportStatementContent](body, "ExportStatementContent")
+	return listIter[ExportStatementContent](s.client, ctx, path, "ExportStatementContent", opts)
 }
 
 type ExportStatementPaymentContentService struct{ *service }
 
-func (s *ExportStatementPaymentContentService) List(ctx context.Context, monetaryAccountID int, eventID int, statementID int, opts *ListOptions) (*ListResponse[ExportStatementPaymentContent], error) {
+func (s *ExportStatementPaymentContentService) List(ctx context.Context, monetaryAccountID int, eventID int, statementID int, opts *ListOptions) iter.Seq2[ExportStatementPaymentContent, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/event/%d/statement/%d/content", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), eventID, statementID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportStatementPaymentContent](body, "ExportStatementPayment")
+	return listIter[ExportStatementPaymentContent](s.client, ctx, path, "ExportStatementPayment", opts)
 }
 
 type ExportStatementPaymentService struct{ *service }
@@ -1563,13 +1368,9 @@ func (s *ExportStatementService) Get(ctx context.Context, monetaryAccountID int,
 	return unmarshalObject[ExportStatement](body, "CustomerStatement")
 }
 
-func (s *ExportStatementService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[ExportStatement], error) {
+func (s *ExportStatementService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[ExportStatement, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/customer-statement", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ExportStatement](body, "CustomerStatement")
+	return listIter[ExportStatement](s.client, ctx, path, "CustomerStatement", opts)
 }
 
 func (s *ExportStatementService) Delete(ctx context.Context, monetaryAccountID int, customerStatementID int) error {
@@ -1579,46 +1380,30 @@ func (s *ExportStatementService) Delete(ctx context.Context, monetaryAccountID i
 
 type InsightEventService struct{ *service }
 
-func (s *InsightEventService) List(ctx context.Context, opts *ListOptions) (*ListResponse[InsightEvent], error) {
+func (s *InsightEventService) List(ctx context.Context, opts *ListOptions) iter.Seq2[InsightEvent, error] {
 	path := fmt.Sprintf("user/%d/insights-search", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[InsightEvent](body, "Event")
+	return listIter[InsightEvent](s.client, ctx, path, "Event", opts)
 }
 
 type InsightPreferenceDateService struct{ *service }
 
-func (s *InsightPreferenceDateService) List(ctx context.Context, opts *ListOptions) (*ListResponse[InsightPreferenceDate], error) {
+func (s *InsightPreferenceDateService) List(ctx context.Context, opts *ListOptions) iter.Seq2[InsightPreferenceDate, error] {
 	path := fmt.Sprintf("user/%d/insight-preference-date", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[InsightPreferenceDate](body, "InsightPreferenceDate")
+	return listIter[InsightPreferenceDate](s.client, ctx, path, "InsightPreferenceDate", opts)
 }
 
 type InsightService struct{ *service }
 
-func (s *InsightService) List(ctx context.Context, opts *ListOptions) (*ListResponse[Insight], error) {
+func (s *InsightService) List(ctx context.Context, opts *ListOptions) iter.Seq2[Insight, error] {
 	path := fmt.Sprintf("user/%d/insights", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[Insight](body, "InsightCategory")
+	return listIter[Insight](s.client, ctx, path, "InsightCategory", opts)
 }
 
 type InstallationServerPublicKeyService struct{ *service }
 
-func (s *InstallationServerPublicKeyService) List(ctx context.Context, installationID int, opts *ListOptions) (*ListResponse[InstallationServerPublicKey], error) {
+func (s *InstallationServerPublicKeyService) List(ctx context.Context, installationID int, opts *ListOptions) iter.Seq2[InstallationServerPublicKey, error] {
 	path := fmt.Sprintf("installation/%d/server-public-key", installationID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[InstallationServerPublicKey](body, "ServerPublicKey")
+	return listIter[InstallationServerPublicKey](s.client, ctx, path, "ServerPublicKey", opts)
 }
 
 type MonetaryAccountBankService struct{ *service }
@@ -1641,13 +1426,9 @@ func (s *MonetaryAccountBankService) Get(ctx context.Context, monetaryAccountBan
 	return unmarshalObject[MonetaryAccountBank](body, "MonetaryAccountBank")
 }
 
-func (s *MonetaryAccountBankService) List(ctx context.Context, opts *ListOptions) (*ListResponse[MonetaryAccountBank], error) {
+func (s *MonetaryAccountBankService) List(ctx context.Context, opts *ListOptions) iter.Seq2[MonetaryAccountBank, error] {
 	path := fmt.Sprintf("user/%d/monetary-account-bank", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MonetaryAccountBank](body, "MonetaryAccountBank")
+	return listIter[MonetaryAccountBank](s.client, ctx, path, "MonetaryAccountBank", opts)
 }
 
 func (s *MonetaryAccountBankService) Update(ctx context.Context, monetaryAccountBankID int, params MonetaryAccountBankUpdateParams) (int, error) {
@@ -1670,13 +1451,9 @@ func (s *MonetaryAccountCardService) Get(ctx context.Context, monetaryAccountCar
 	return unmarshalObject[MonetaryAccountCard](body, "MonetaryAccountCard")
 }
 
-func (s *MonetaryAccountCardService) List(ctx context.Context, opts *ListOptions) (*ListResponse[MonetaryAccountCard], error) {
+func (s *MonetaryAccountCardService) List(ctx context.Context, opts *ListOptions) iter.Seq2[MonetaryAccountCard, error] {
 	path := fmt.Sprintf("user/%d/monetary-account-card", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MonetaryAccountCard](body, "MonetaryAccountCard")
+	return listIter[MonetaryAccountCard](s.client, ctx, path, "MonetaryAccountCard", opts)
 }
 
 func (s *MonetaryAccountCardService) Update(ctx context.Context, monetaryAccountCardID int) (int, error) {
@@ -1708,13 +1485,9 @@ func (s *MonetaryAccountExternalSavingsService) Get(ctx context.Context, monetar
 	return unmarshalObject[MonetaryAccountExternalSavings](body, "MonetaryAccountExternalSavings")
 }
 
-func (s *MonetaryAccountExternalSavingsService) List(ctx context.Context, opts *ListOptions) (*ListResponse[MonetaryAccountExternalSavings], error) {
+func (s *MonetaryAccountExternalSavingsService) List(ctx context.Context, opts *ListOptions) iter.Seq2[MonetaryAccountExternalSavings, error] {
 	path := fmt.Sprintf("user/%d/monetary-account-external-savings", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MonetaryAccountExternalSavings](body, "MonetaryAccountExternalSavings")
+	return listIter[MonetaryAccountExternalSavings](s.client, ctx, path, "MonetaryAccountExternalSavings", opts)
 }
 
 func (s *MonetaryAccountExternalSavingsService) Update(ctx context.Context, monetaryAccountExternalSavingsID int, params MonetaryAccountExternalSavingsUpdateParams) (int, error) {
@@ -1746,13 +1519,9 @@ func (s *MonetaryAccountExternalService) Get(ctx context.Context, monetaryAccoun
 	return unmarshalObject[MonetaryAccountExternal](body, "MonetaryAccountExternal")
 }
 
-func (s *MonetaryAccountExternalService) List(ctx context.Context, opts *ListOptions) (*ListResponse[MonetaryAccountExternal], error) {
+func (s *MonetaryAccountExternalService) List(ctx context.Context, opts *ListOptions) iter.Seq2[MonetaryAccountExternal, error] {
 	path := fmt.Sprintf("user/%d/monetary-account-external", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MonetaryAccountExternal](body, "MonetaryAccountExternal")
+	return listIter[MonetaryAccountExternal](s.client, ctx, path, "MonetaryAccountExternal", opts)
 }
 
 func (s *MonetaryAccountExternalService) Update(ctx context.Context, monetaryAccountExternalID int, params MonetaryAccountExternalUpdateParams) (int, error) {
@@ -1784,13 +1553,9 @@ func (s *MonetaryAccountJointService) Get(ctx context.Context, monetaryAccountJo
 	return unmarshalObject[MonetaryAccountJoint](body, "MonetaryAccountJoint")
 }
 
-func (s *MonetaryAccountJointService) List(ctx context.Context, opts *ListOptions) (*ListResponse[MonetaryAccountJoint], error) {
+func (s *MonetaryAccountJointService) List(ctx context.Context, opts *ListOptions) iter.Seq2[MonetaryAccountJoint, error] {
 	path := fmt.Sprintf("user/%d/monetary-account-joint", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MonetaryAccountJoint](body, "MonetaryAccountJoint")
+	return listIter[MonetaryAccountJoint](s.client, ctx, path, "MonetaryAccountJoint", opts)
 }
 
 func (s *MonetaryAccountJointService) Update(ctx context.Context, monetaryAccountJointID int, params MonetaryAccountJointUpdateParams) (int, error) {
@@ -1822,13 +1587,9 @@ func (s *MonetaryAccountSavingsService) Get(ctx context.Context, monetaryAccount
 	return unmarshalObject[MonetaryAccountSavings](body, "MonetaryAccountSavings")
 }
 
-func (s *MonetaryAccountSavingsService) List(ctx context.Context, opts *ListOptions) (*ListResponse[MonetaryAccountSavings], error) {
+func (s *MonetaryAccountSavingsService) List(ctx context.Context, opts *ListOptions) iter.Seq2[MonetaryAccountSavings, error] {
 	path := fmt.Sprintf("user/%d/monetary-account-savings", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MonetaryAccountSavings](body, "MonetaryAccountSavings")
+	return listIter[MonetaryAccountSavings](s.client, ctx, path, "MonetaryAccountSavings", opts)
 }
 
 func (s *MonetaryAccountSavingsService) Update(ctx context.Context, monetaryAccountSavingsID int, params MonetaryAccountSavingsUpdateParams) (int, error) {
@@ -1851,13 +1612,9 @@ func (s *MonetaryAccountService) Get(ctx context.Context, monetaryAccountID int)
 	return unmarshalObject[MonetaryAccount](body, "MonetaryAccount")
 }
 
-func (s *MonetaryAccountService) List(ctx context.Context, opts *ListOptions) (*ListResponse[MonetaryAccount], error) {
+func (s *MonetaryAccountService) List(ctx context.Context, opts *ListOptions) iter.Seq2[MonetaryAccount, error] {
 	path := fmt.Sprintf("user/%d/monetary-account", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MonetaryAccount](body, "MonetaryAccount")
+	return listIter[MonetaryAccount](s.client, ctx, path, "MonetaryAccount", opts)
 }
 
 type NoteAttachmentAdyenCardTransactionService struct{ *service }
@@ -1880,13 +1637,9 @@ func (s *NoteAttachmentAdyenCardTransactionService) Get(ctx context.Context, mon
 	return unmarshalObject[NoteAttachmentAdyenCardTransaction](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentAdyenCardTransactionService) List(ctx context.Context, monetaryAccountID int, adyenCardTransactionID int, opts *ListOptions) (*ListResponse[NoteAttachmentAdyenCardTransaction], error) {
+func (s *NoteAttachmentAdyenCardTransactionService) List(ctx context.Context, monetaryAccountID int, adyenCardTransactionID int, opts *ListOptions) iter.Seq2[NoteAttachmentAdyenCardTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/adyen-card-transaction/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), adyenCardTransactionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentAdyenCardTransaction](body, "NoteAttachment")
+	return listIter[NoteAttachmentAdyenCardTransaction](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentAdyenCardTransactionService) Update(ctx context.Context, monetaryAccountID int, adyenCardTransactionID int, noteAttachmentID int, params NoteAttachmentAdyenCardTransactionUpdateParams) (int, error) {
@@ -1923,13 +1676,9 @@ func (s *NoteTextAdyenCardTransactionService) Get(ctx context.Context, monetaryA
 	return unmarshalObject[NoteTextAdyenCardTransaction](body, "NoteText")
 }
 
-func (s *NoteTextAdyenCardTransactionService) List(ctx context.Context, monetaryAccountID int, adyenCardTransactionID int, opts *ListOptions) (*ListResponse[NoteTextAdyenCardTransaction], error) {
+func (s *NoteTextAdyenCardTransactionService) List(ctx context.Context, monetaryAccountID int, adyenCardTransactionID int, opts *ListOptions) iter.Seq2[NoteTextAdyenCardTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/adyen-card-transaction/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), adyenCardTransactionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextAdyenCardTransaction](body, "NoteText")
+	return listIter[NoteTextAdyenCardTransaction](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextAdyenCardTransactionService) Update(ctx context.Context, monetaryAccountID int, adyenCardTransactionID int, noteTextID int, params NoteTextAdyenCardTransactionUpdateParams) (int, error) {
@@ -1966,13 +1715,9 @@ func (s *NoteAttachmentBankSwitchServiceNetherlandsIncomingPaymentService) Get(c
 	return unmarshalObject[NoteAttachmentBankSwitchServiceNetherlandsIncomingPayment](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentBankSwitchServiceNetherlandsIncomingPaymentService) List(ctx context.Context, monetaryAccountID int, switchServicePaymentID int, opts *ListOptions) (*ListResponse[NoteAttachmentBankSwitchServiceNetherlandsIncomingPayment], error) {
+func (s *NoteAttachmentBankSwitchServiceNetherlandsIncomingPaymentService) List(ctx context.Context, monetaryAccountID int, switchServicePaymentID int, opts *ListOptions) iter.Seq2[NoteAttachmentBankSwitchServiceNetherlandsIncomingPayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/switch-service-payment/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), switchServicePaymentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentBankSwitchServiceNetherlandsIncomingPayment](body, "NoteAttachment")
+	return listIter[NoteAttachmentBankSwitchServiceNetherlandsIncomingPayment](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentBankSwitchServiceNetherlandsIncomingPaymentService) Update(ctx context.Context, monetaryAccountID int, switchServicePaymentID int, noteAttachmentID int, params NoteAttachmentBankSwitchServiceNetherlandsIncomingPaymentUpdateParams) (int, error) {
@@ -2009,13 +1754,9 @@ func (s *NoteTextBankSwitchServiceNetherlandsIncomingPaymentService) Get(ctx con
 	return unmarshalObject[NoteTextBankSwitchServiceNetherlandsIncomingPayment](body, "NoteText")
 }
 
-func (s *NoteTextBankSwitchServiceNetherlandsIncomingPaymentService) List(ctx context.Context, monetaryAccountID int, switchServicePaymentID int, opts *ListOptions) (*ListResponse[NoteTextBankSwitchServiceNetherlandsIncomingPayment], error) {
+func (s *NoteTextBankSwitchServiceNetherlandsIncomingPaymentService) List(ctx context.Context, monetaryAccountID int, switchServicePaymentID int, opts *ListOptions) iter.Seq2[NoteTextBankSwitchServiceNetherlandsIncomingPayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/switch-service-payment/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), switchServicePaymentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextBankSwitchServiceNetherlandsIncomingPayment](body, "NoteText")
+	return listIter[NoteTextBankSwitchServiceNetherlandsIncomingPayment](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextBankSwitchServiceNetherlandsIncomingPaymentService) Update(ctx context.Context, monetaryAccountID int, switchServicePaymentID int, noteTextID int, params NoteTextBankSwitchServiceNetherlandsIncomingPaymentUpdateParams) (int, error) {
@@ -2052,13 +1793,9 @@ func (s *NoteAttachmentBunqMeFundraiserResultService) Get(ctx context.Context, m
 	return unmarshalObject[NoteAttachmentBunqMeFundraiserResult](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentBunqMeFundraiserResultService) List(ctx context.Context, monetaryAccountID int, bunqmeFundraiserResultID int, opts *ListOptions) (*ListResponse[NoteAttachmentBunqMeFundraiserResult], error) {
+func (s *NoteAttachmentBunqMeFundraiserResultService) List(ctx context.Context, monetaryAccountID int, bunqmeFundraiserResultID int, opts *ListOptions) iter.Seq2[NoteAttachmentBunqMeFundraiserResult, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/bunqme-fundraiser-result/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), bunqmeFundraiserResultID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentBunqMeFundraiserResult](body, "NoteAttachment")
+	return listIter[NoteAttachmentBunqMeFundraiserResult](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentBunqMeFundraiserResultService) Update(ctx context.Context, monetaryAccountID int, bunqmeFundraiserResultID int, noteAttachmentID int, params NoteAttachmentBunqMeFundraiserResultUpdateParams) (int, error) {
@@ -2095,13 +1832,9 @@ func (s *NoteTextBunqMeFundraiserResultService) Get(ctx context.Context, monetar
 	return unmarshalObject[NoteTextBunqMeFundraiserResult](body, "NoteText")
 }
 
-func (s *NoteTextBunqMeFundraiserResultService) List(ctx context.Context, monetaryAccountID int, bunqmeFundraiserResultID int, opts *ListOptions) (*ListResponse[NoteTextBunqMeFundraiserResult], error) {
+func (s *NoteTextBunqMeFundraiserResultService) List(ctx context.Context, monetaryAccountID int, bunqmeFundraiserResultID int, opts *ListOptions) iter.Seq2[NoteTextBunqMeFundraiserResult, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/bunqme-fundraiser-result/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), bunqmeFundraiserResultID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextBunqMeFundraiserResult](body, "NoteText")
+	return listIter[NoteTextBunqMeFundraiserResult](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextBunqMeFundraiserResultService) Update(ctx context.Context, monetaryAccountID int, bunqmeFundraiserResultID int, noteTextID int, params NoteTextBunqMeFundraiserResultUpdateParams) (int, error) {
@@ -2138,13 +1871,9 @@ func (s *NoteAttachmentDraftPaymentService) Get(ctx context.Context, monetaryAcc
 	return unmarshalObject[NoteAttachmentDraftPayment](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentDraftPaymentService) List(ctx context.Context, monetaryAccountID int, draftPaymentID int, opts *ListOptions) (*ListResponse[NoteAttachmentDraftPayment], error) {
+func (s *NoteAttachmentDraftPaymentService) List(ctx context.Context, monetaryAccountID int, draftPaymentID int, opts *ListOptions) iter.Seq2[NoteAttachmentDraftPayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/draft-payment/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), draftPaymentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentDraftPayment](body, "NoteAttachment")
+	return listIter[NoteAttachmentDraftPayment](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentDraftPaymentService) Update(ctx context.Context, monetaryAccountID int, draftPaymentID int, noteAttachmentID int, params NoteAttachmentDraftPaymentUpdateParams) (int, error) {
@@ -2181,13 +1910,9 @@ func (s *NoteTextDraftPaymentService) Get(ctx context.Context, monetaryAccountID
 	return unmarshalObject[NoteTextDraftPayment](body, "NoteText")
 }
 
-func (s *NoteTextDraftPaymentService) List(ctx context.Context, monetaryAccountID int, draftPaymentID int, opts *ListOptions) (*ListResponse[NoteTextDraftPayment], error) {
+func (s *NoteTextDraftPaymentService) List(ctx context.Context, monetaryAccountID int, draftPaymentID int, opts *ListOptions) iter.Seq2[NoteTextDraftPayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/draft-payment/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), draftPaymentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextDraftPayment](body, "NoteText")
+	return listIter[NoteTextDraftPayment](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextDraftPaymentService) Update(ctx context.Context, monetaryAccountID int, draftPaymentID int, noteTextID int, params NoteTextDraftPaymentUpdateParams) (int, error) {
@@ -2224,13 +1949,9 @@ func (s *NoteAttachmentIdealMerchantTransactionService) Get(ctx context.Context,
 	return unmarshalObject[NoteAttachmentIdealMerchantTransaction](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentIdealMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, idealMerchantTransactionID int, opts *ListOptions) (*ListResponse[NoteAttachmentIdealMerchantTransaction], error) {
+func (s *NoteAttachmentIdealMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, idealMerchantTransactionID int, opts *ListOptions) iter.Seq2[NoteAttachmentIdealMerchantTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/ideal-merchant-transaction/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), idealMerchantTransactionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentIdealMerchantTransaction](body, "NoteAttachment")
+	return listIter[NoteAttachmentIdealMerchantTransaction](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentIdealMerchantTransactionService) Update(ctx context.Context, monetaryAccountID int, idealMerchantTransactionID int, noteAttachmentID int, params NoteAttachmentIdealMerchantTransactionUpdateParams) (int, error) {
@@ -2267,13 +1988,9 @@ func (s *NoteTextIdealMerchantTransactionService) Get(ctx context.Context, monet
 	return unmarshalObject[NoteTextIdealMerchantTransaction](body, "NoteText")
 }
 
-func (s *NoteTextIdealMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, idealMerchantTransactionID int, opts *ListOptions) (*ListResponse[NoteTextIdealMerchantTransaction], error) {
+func (s *NoteTextIdealMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, idealMerchantTransactionID int, opts *ListOptions) iter.Seq2[NoteTextIdealMerchantTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/ideal-merchant-transaction/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), idealMerchantTransactionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextIdealMerchantTransaction](body, "NoteText")
+	return listIter[NoteTextIdealMerchantTransaction](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextIdealMerchantTransactionService) Update(ctx context.Context, monetaryAccountID int, idealMerchantTransactionID int, noteTextID int, params NoteTextIdealMerchantTransactionUpdateParams) (int, error) {
@@ -2310,13 +2027,9 @@ func (s *NoteAttachmentMasterCardActionService) Get(ctx context.Context, monetar
 	return unmarshalObject[NoteAttachmentMasterCardAction](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentMasterCardActionService) List(ctx context.Context, monetaryAccountID int, mastercardActionID int, opts *ListOptions) (*ListResponse[NoteAttachmentMasterCardAction], error) {
+func (s *NoteAttachmentMasterCardActionService) List(ctx context.Context, monetaryAccountID int, mastercardActionID int, opts *ListOptions) iter.Seq2[NoteAttachmentMasterCardAction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/mastercard-action/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), mastercardActionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentMasterCardAction](body, "NoteAttachment")
+	return listIter[NoteAttachmentMasterCardAction](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentMasterCardActionService) Update(ctx context.Context, monetaryAccountID int, mastercardActionID int, noteAttachmentID int, params NoteAttachmentMasterCardActionUpdateParams) (int, error) {
@@ -2353,13 +2066,9 @@ func (s *NoteTextMasterCardActionService) Get(ctx context.Context, monetaryAccou
 	return unmarshalObject[NoteTextMasterCardAction](body, "NoteText")
 }
 
-func (s *NoteTextMasterCardActionService) List(ctx context.Context, monetaryAccountID int, mastercardActionID int, opts *ListOptions) (*ListResponse[NoteTextMasterCardAction], error) {
+func (s *NoteTextMasterCardActionService) List(ctx context.Context, monetaryAccountID int, mastercardActionID int, opts *ListOptions) iter.Seq2[NoteTextMasterCardAction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/mastercard-action/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), mastercardActionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextMasterCardAction](body, "NoteText")
+	return listIter[NoteTextMasterCardAction](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextMasterCardActionService) Update(ctx context.Context, monetaryAccountID int, mastercardActionID int, noteTextID int, params NoteTextMasterCardActionUpdateParams) (int, error) {
@@ -2396,13 +2105,9 @@ func (s *NoteAttachmentOpenBankingMerchantTransactionService) Get(ctx context.Co
 	return unmarshalObject[NoteAttachmentOpenBankingMerchantTransaction](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentOpenBankingMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, openBankingMerchantTransactionID int, opts *ListOptions) (*ListResponse[NoteAttachmentOpenBankingMerchantTransaction], error) {
+func (s *NoteAttachmentOpenBankingMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, openBankingMerchantTransactionID int, opts *ListOptions) iter.Seq2[NoteAttachmentOpenBankingMerchantTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/open-banking-merchant-transaction/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), openBankingMerchantTransactionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentOpenBankingMerchantTransaction](body, "NoteAttachment")
+	return listIter[NoteAttachmentOpenBankingMerchantTransaction](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentOpenBankingMerchantTransactionService) Update(ctx context.Context, monetaryAccountID int, openBankingMerchantTransactionID int, noteAttachmentID int, params NoteAttachmentOpenBankingMerchantTransactionUpdateParams) (int, error) {
@@ -2439,13 +2144,9 @@ func (s *NoteTextOpenBankingMerchantTransactionService) Get(ctx context.Context,
 	return unmarshalObject[NoteTextOpenBankingMerchantTransaction](body, "NoteText")
 }
 
-func (s *NoteTextOpenBankingMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, openBankingMerchantTransactionID int, opts *ListOptions) (*ListResponse[NoteTextOpenBankingMerchantTransaction], error) {
+func (s *NoteTextOpenBankingMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, openBankingMerchantTransactionID int, opts *ListOptions) iter.Seq2[NoteTextOpenBankingMerchantTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/open-banking-merchant-transaction/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), openBankingMerchantTransactionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextOpenBankingMerchantTransaction](body, "NoteText")
+	return listIter[NoteTextOpenBankingMerchantTransaction](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextOpenBankingMerchantTransactionService) Update(ctx context.Context, monetaryAccountID int, openBankingMerchantTransactionID int, noteTextID int, params NoteTextOpenBankingMerchantTransactionUpdateParams) (int, error) {
@@ -2482,13 +2183,9 @@ func (s *NoteAttachmentPaymentBatchService) Get(ctx context.Context, monetaryAcc
 	return unmarshalObject[NoteAttachmentPaymentBatch](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentPaymentBatchService) List(ctx context.Context, monetaryAccountID int, paymentBatchID int, opts *ListOptions) (*ListResponse[NoteAttachmentPaymentBatch], error) {
+func (s *NoteAttachmentPaymentBatchService) List(ctx context.Context, monetaryAccountID int, paymentBatchID int, opts *ListOptions) iter.Seq2[NoteAttachmentPaymentBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment-batch/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), paymentBatchID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentPaymentBatch](body, "NoteAttachment")
+	return listIter[NoteAttachmentPaymentBatch](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentPaymentBatchService) Update(ctx context.Context, monetaryAccountID int, paymentBatchID int, noteAttachmentID int, params NoteAttachmentPaymentBatchUpdateParams) (int, error) {
@@ -2525,13 +2222,9 @@ func (s *NoteTextPaymentBatchService) Get(ctx context.Context, monetaryAccountID
 	return unmarshalObject[NoteTextPaymentBatch](body, "NoteText")
 }
 
-func (s *NoteTextPaymentBatchService) List(ctx context.Context, monetaryAccountID int, paymentBatchID int, opts *ListOptions) (*ListResponse[NoteTextPaymentBatch], error) {
+func (s *NoteTextPaymentBatchService) List(ctx context.Context, monetaryAccountID int, paymentBatchID int, opts *ListOptions) iter.Seq2[NoteTextPaymentBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment-batch/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), paymentBatchID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextPaymentBatch](body, "NoteText")
+	return listIter[NoteTextPaymentBatch](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextPaymentBatchService) Update(ctx context.Context, monetaryAccountID int, paymentBatchID int, noteTextID int, params NoteTextPaymentBatchUpdateParams) (int, error) {
@@ -2568,13 +2261,9 @@ func (s *NoteAttachmentPaymentDelayedService) Get(ctx context.Context, monetaryA
 	return unmarshalObject[NoteAttachmentPaymentDelayed](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentPaymentDelayedService) List(ctx context.Context, monetaryAccountID int, paymentDelayedID int, opts *ListOptions) (*ListResponse[NoteAttachmentPaymentDelayed], error) {
+func (s *NoteAttachmentPaymentDelayedService) List(ctx context.Context, monetaryAccountID int, paymentDelayedID int, opts *ListOptions) iter.Seq2[NoteAttachmentPaymentDelayed, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment-delayed/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), paymentDelayedID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentPaymentDelayed](body, "NoteAttachment")
+	return listIter[NoteAttachmentPaymentDelayed](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentPaymentDelayedService) Update(ctx context.Context, monetaryAccountID int, paymentDelayedID int, noteAttachmentID int, params NoteAttachmentPaymentDelayedUpdateParams) (int, error) {
@@ -2611,13 +2300,9 @@ func (s *NoteTextPaymentDelayedService) Get(ctx context.Context, monetaryAccount
 	return unmarshalObject[NoteTextPaymentDelayed](body, "NoteText")
 }
 
-func (s *NoteTextPaymentDelayedService) List(ctx context.Context, monetaryAccountID int, paymentDelayedID int, opts *ListOptions) (*ListResponse[NoteTextPaymentDelayed], error) {
+func (s *NoteTextPaymentDelayedService) List(ctx context.Context, monetaryAccountID int, paymentDelayedID int, opts *ListOptions) iter.Seq2[NoteTextPaymentDelayed, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment-delayed/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), paymentDelayedID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextPaymentDelayed](body, "NoteText")
+	return listIter[NoteTextPaymentDelayed](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextPaymentDelayedService) Update(ctx context.Context, monetaryAccountID int, paymentDelayedID int, noteTextID int, params NoteTextPaymentDelayedUpdateParams) (int, error) {
@@ -2654,13 +2339,9 @@ func (s *NoteAttachmentPaymentService) Get(ctx context.Context, monetaryAccountI
 	return unmarshalObject[NoteAttachmentPayment](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentPaymentService) List(ctx context.Context, monetaryAccountID int, paymentID int, opts *ListOptions) (*ListResponse[NoteAttachmentPayment], error) {
+func (s *NoteAttachmentPaymentService) List(ctx context.Context, monetaryAccountID int, paymentID int, opts *ListOptions) iter.Seq2[NoteAttachmentPayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), paymentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentPayment](body, "NoteAttachment")
+	return listIter[NoteAttachmentPayment](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentPaymentService) Update(ctx context.Context, monetaryAccountID int, paymentID int, noteAttachmentID int, params NoteAttachmentPaymentUpdateParams) (int, error) {
@@ -2697,13 +2378,9 @@ func (s *NoteTextPaymentService) Get(ctx context.Context, monetaryAccountID int,
 	return unmarshalObject[NoteTextPayment](body, "NoteText")
 }
 
-func (s *NoteTextPaymentService) List(ctx context.Context, monetaryAccountID int, paymentID int, opts *ListOptions) (*ListResponse[NoteTextPayment], error) {
+func (s *NoteTextPaymentService) List(ctx context.Context, monetaryAccountID int, paymentID int, opts *ListOptions) iter.Seq2[NoteTextPayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), paymentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextPayment](body, "NoteText")
+	return listIter[NoteTextPayment](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextPaymentService) Update(ctx context.Context, monetaryAccountID int, paymentID int, noteTextID int, params NoteTextPaymentUpdateParams) (int, error) {
@@ -2740,13 +2417,9 @@ func (s *NoteAttachmentRequestInquiryBatchService) Get(ctx context.Context, mone
 	return unmarshalObject[NoteAttachmentRequestInquiryBatch](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentRequestInquiryBatchService) List(ctx context.Context, monetaryAccountID int, requestInquiryBatchID int, opts *ListOptions) (*ListResponse[NoteAttachmentRequestInquiryBatch], error) {
+func (s *NoteAttachmentRequestInquiryBatchService) List(ctx context.Context, monetaryAccountID int, requestInquiryBatchID int, opts *ListOptions) iter.Seq2[NoteAttachmentRequestInquiryBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-inquiry-batch/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), requestInquiryBatchID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentRequestInquiryBatch](body, "NoteAttachment")
+	return listIter[NoteAttachmentRequestInquiryBatch](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentRequestInquiryBatchService) Update(ctx context.Context, monetaryAccountID int, requestInquiryBatchID int, noteAttachmentID int, params NoteAttachmentRequestInquiryBatchUpdateParams) (int, error) {
@@ -2783,13 +2456,9 @@ func (s *NoteTextRequestInquiryBatchService) Get(ctx context.Context, monetaryAc
 	return unmarshalObject[NoteTextRequestInquiryBatch](body, "NoteText")
 }
 
-func (s *NoteTextRequestInquiryBatchService) List(ctx context.Context, monetaryAccountID int, requestInquiryBatchID int, opts *ListOptions) (*ListResponse[NoteTextRequestInquiryBatch], error) {
+func (s *NoteTextRequestInquiryBatchService) List(ctx context.Context, monetaryAccountID int, requestInquiryBatchID int, opts *ListOptions) iter.Seq2[NoteTextRequestInquiryBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-inquiry-batch/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), requestInquiryBatchID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextRequestInquiryBatch](body, "NoteText")
+	return listIter[NoteTextRequestInquiryBatch](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextRequestInquiryBatchService) Update(ctx context.Context, monetaryAccountID int, requestInquiryBatchID int, noteTextID int, params NoteTextRequestInquiryBatchUpdateParams) (int, error) {
@@ -2826,13 +2495,9 @@ func (s *NoteAttachmentRequestInquiryService) Get(ctx context.Context, monetaryA
 	return unmarshalObject[NoteAttachmentRequestInquiry](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentRequestInquiryService) List(ctx context.Context, monetaryAccountID int, requestInquiryID int, opts *ListOptions) (*ListResponse[NoteAttachmentRequestInquiry], error) {
+func (s *NoteAttachmentRequestInquiryService) List(ctx context.Context, monetaryAccountID int, requestInquiryID int, opts *ListOptions) iter.Seq2[NoteAttachmentRequestInquiry, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-inquiry/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), requestInquiryID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentRequestInquiry](body, "NoteAttachment")
+	return listIter[NoteAttachmentRequestInquiry](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentRequestInquiryService) Update(ctx context.Context, monetaryAccountID int, requestInquiryID int, noteAttachmentID int, params NoteAttachmentRequestInquiryUpdateParams) (int, error) {
@@ -2869,13 +2534,9 @@ func (s *NoteTextRequestInquiryService) Get(ctx context.Context, monetaryAccount
 	return unmarshalObject[NoteTextRequestInquiry](body, "NoteText")
 }
 
-func (s *NoteTextRequestInquiryService) List(ctx context.Context, monetaryAccountID int, requestInquiryID int, opts *ListOptions) (*ListResponse[NoteTextRequestInquiry], error) {
+func (s *NoteTextRequestInquiryService) List(ctx context.Context, monetaryAccountID int, requestInquiryID int, opts *ListOptions) iter.Seq2[NoteTextRequestInquiry, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-inquiry/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), requestInquiryID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextRequestInquiry](body, "NoteText")
+	return listIter[NoteTextRequestInquiry](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextRequestInquiryService) Update(ctx context.Context, monetaryAccountID int, requestInquiryID int, noteTextID int, params NoteTextRequestInquiryUpdateParams) (int, error) {
@@ -2912,13 +2573,9 @@ func (s *NoteAttachmentRequestResponseService) Get(ctx context.Context, monetary
 	return unmarshalObject[NoteAttachmentRequestResponse](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentRequestResponseService) List(ctx context.Context, monetaryAccountID int, requestResponseID int, opts *ListOptions) (*ListResponse[NoteAttachmentRequestResponse], error) {
+func (s *NoteAttachmentRequestResponseService) List(ctx context.Context, monetaryAccountID int, requestResponseID int, opts *ListOptions) iter.Seq2[NoteAttachmentRequestResponse, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-response/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), requestResponseID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentRequestResponse](body, "NoteAttachment")
+	return listIter[NoteAttachmentRequestResponse](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentRequestResponseService) Update(ctx context.Context, monetaryAccountID int, requestResponseID int, noteAttachmentID int, params NoteAttachmentRequestResponseUpdateParams) (int, error) {
@@ -2955,13 +2612,9 @@ func (s *NoteTextRequestResponseService) Get(ctx context.Context, monetaryAccoun
 	return unmarshalObject[NoteTextRequestResponse](body, "NoteText")
 }
 
-func (s *NoteTextRequestResponseService) List(ctx context.Context, monetaryAccountID int, requestResponseID int, opts *ListOptions) (*ListResponse[NoteTextRequestResponse], error) {
+func (s *NoteTextRequestResponseService) List(ctx context.Context, monetaryAccountID int, requestResponseID int, opts *ListOptions) iter.Seq2[NoteTextRequestResponse, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/request-response/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), requestResponseID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextRequestResponse](body, "NoteText")
+	return listIter[NoteTextRequestResponse](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextRequestResponseService) Update(ctx context.Context, monetaryAccountID int, requestResponseID int, noteTextID int, params NoteTextRequestResponseUpdateParams) (int, error) {
@@ -2998,13 +2651,9 @@ func (s *NoteAttachmentScheduleInstanceService) Get(ctx context.Context, monetar
 	return unmarshalObject[NoteAttachmentScheduleInstance](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentScheduleInstanceService) List(ctx context.Context, monetaryAccountID int, scheduleID int, scheduleInstanceID int, opts *ListOptions) (*ListResponse[NoteAttachmentScheduleInstance], error) {
+func (s *NoteAttachmentScheduleInstanceService) List(ctx context.Context, monetaryAccountID int, scheduleID int, scheduleInstanceID int, opts *ListOptions) iter.Seq2[NoteAttachmentScheduleInstance, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule/%d/schedule-instance/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), scheduleID, scheduleInstanceID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentScheduleInstance](body, "NoteAttachment")
+	return listIter[NoteAttachmentScheduleInstance](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentScheduleInstanceService) Update(ctx context.Context, monetaryAccountID int, scheduleID int, scheduleInstanceID int, noteAttachmentID int, params NoteAttachmentScheduleInstanceUpdateParams) (int, error) {
@@ -3041,13 +2690,9 @@ func (s *NoteTextScheduleInstanceService) Get(ctx context.Context, monetaryAccou
 	return unmarshalObject[NoteTextScheduleInstance](body, "NoteText")
 }
 
-func (s *NoteTextScheduleInstanceService) List(ctx context.Context, monetaryAccountID int, scheduleID int, scheduleInstanceID int, opts *ListOptions) (*ListResponse[NoteTextScheduleInstance], error) {
+func (s *NoteTextScheduleInstanceService) List(ctx context.Context, monetaryAccountID int, scheduleID int, scheduleInstanceID int, opts *ListOptions) iter.Seq2[NoteTextScheduleInstance, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule/%d/schedule-instance/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), scheduleID, scheduleInstanceID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextScheduleInstance](body, "NoteText")
+	return listIter[NoteTextScheduleInstance](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextScheduleInstanceService) Update(ctx context.Context, monetaryAccountID int, scheduleID int, scheduleInstanceID int, noteTextID int, params NoteTextScheduleInstanceUpdateParams) (int, error) {
@@ -3084,13 +2729,9 @@ func (s *NoteAttachmentSchedulePaymentBatchService) Get(ctx context.Context, mon
 	return unmarshalObject[NoteAttachmentSchedulePaymentBatch](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentSchedulePaymentBatchService) List(ctx context.Context, monetaryAccountID int, schedulePaymentBatchID int, opts *ListOptions) (*ListResponse[NoteAttachmentSchedulePaymentBatch], error) {
+func (s *NoteAttachmentSchedulePaymentBatchService) List(ctx context.Context, monetaryAccountID int, schedulePaymentBatchID int, opts *ListOptions) iter.Seq2[NoteAttachmentSchedulePaymentBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-payment-batch/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), schedulePaymentBatchID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentSchedulePaymentBatch](body, "NoteAttachment")
+	return listIter[NoteAttachmentSchedulePaymentBatch](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentSchedulePaymentBatchService) Update(ctx context.Context, monetaryAccountID int, schedulePaymentBatchID int, noteAttachmentID int, params NoteAttachmentSchedulePaymentBatchUpdateParams) (int, error) {
@@ -3127,13 +2768,9 @@ func (s *NoteTextSchedulePaymentBatchService) Get(ctx context.Context, monetaryA
 	return unmarshalObject[NoteTextSchedulePaymentBatch](body, "NoteText")
 }
 
-func (s *NoteTextSchedulePaymentBatchService) List(ctx context.Context, monetaryAccountID int, schedulePaymentBatchID int, opts *ListOptions) (*ListResponse[NoteTextSchedulePaymentBatch], error) {
+func (s *NoteTextSchedulePaymentBatchService) List(ctx context.Context, monetaryAccountID int, schedulePaymentBatchID int, opts *ListOptions) iter.Seq2[NoteTextSchedulePaymentBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-payment-batch/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), schedulePaymentBatchID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextSchedulePaymentBatch](body, "NoteText")
+	return listIter[NoteTextSchedulePaymentBatch](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextSchedulePaymentBatchService) Update(ctx context.Context, monetaryAccountID int, schedulePaymentBatchID int, noteTextID int, params NoteTextSchedulePaymentBatchUpdateParams) (int, error) {
@@ -3170,13 +2807,9 @@ func (s *NoteAttachmentSchedulePaymentService) Get(ctx context.Context, monetary
 	return unmarshalObject[NoteAttachmentSchedulePayment](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentSchedulePaymentService) List(ctx context.Context, monetaryAccountID int, schedulePaymentID int, opts *ListOptions) (*ListResponse[NoteAttachmentSchedulePayment], error) {
+func (s *NoteAttachmentSchedulePaymentService) List(ctx context.Context, monetaryAccountID int, schedulePaymentID int, opts *ListOptions) iter.Seq2[NoteAttachmentSchedulePayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-payment/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), schedulePaymentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentSchedulePayment](body, "NoteAttachment")
+	return listIter[NoteAttachmentSchedulePayment](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentSchedulePaymentService) Update(ctx context.Context, monetaryAccountID int, schedulePaymentID int, noteAttachmentID int, params NoteAttachmentSchedulePaymentUpdateParams) (int, error) {
@@ -3213,13 +2846,9 @@ func (s *NoteTextSchedulePaymentService) Get(ctx context.Context, monetaryAccoun
 	return unmarshalObject[NoteTextSchedulePayment](body, "NoteText")
 }
 
-func (s *NoteTextSchedulePaymentService) List(ctx context.Context, monetaryAccountID int, schedulePaymentID int, opts *ListOptions) (*ListResponse[NoteTextSchedulePayment], error) {
+func (s *NoteTextSchedulePaymentService) List(ctx context.Context, monetaryAccountID int, schedulePaymentID int, opts *ListOptions) iter.Seq2[NoteTextSchedulePayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-payment/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), schedulePaymentID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextSchedulePayment](body, "NoteText")
+	return listIter[NoteTextSchedulePayment](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextSchedulePaymentService) Update(ctx context.Context, monetaryAccountID int, schedulePaymentID int, noteTextID int, params NoteTextSchedulePaymentUpdateParams) (int, error) {
@@ -3256,13 +2885,9 @@ func (s *NoteAttachmentScheduleRequestBatchService) Get(ctx context.Context, mon
 	return unmarshalObject[NoteAttachmentScheduleRequestBatch](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentScheduleRequestBatchService) List(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryBatchID int, opts *ListOptions) (*ListResponse[NoteAttachmentScheduleRequestBatch], error) {
+func (s *NoteAttachmentScheduleRequestBatchService) List(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryBatchID int, opts *ListOptions) iter.Seq2[NoteAttachmentScheduleRequestBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-request-inquiry-batch/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), scheduleRequestInquiryBatchID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentScheduleRequestBatch](body, "NoteAttachment")
+	return listIter[NoteAttachmentScheduleRequestBatch](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentScheduleRequestBatchService) Update(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryBatchID int, noteAttachmentID int, params NoteAttachmentScheduleRequestBatchUpdateParams) (int, error) {
@@ -3299,13 +2924,9 @@ func (s *NoteTextScheduleRequestBatchService) Get(ctx context.Context, monetaryA
 	return unmarshalObject[NoteTextScheduleRequestBatch](body, "NoteText")
 }
 
-func (s *NoteTextScheduleRequestBatchService) List(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryBatchID int, opts *ListOptions) (*ListResponse[NoteTextScheduleRequestBatch], error) {
+func (s *NoteTextScheduleRequestBatchService) List(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryBatchID int, opts *ListOptions) iter.Seq2[NoteTextScheduleRequestBatch, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-request-inquiry-batch/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), scheduleRequestInquiryBatchID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextScheduleRequestBatch](body, "NoteText")
+	return listIter[NoteTextScheduleRequestBatch](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextScheduleRequestBatchService) Update(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryBatchID int, noteTextID int, params NoteTextScheduleRequestBatchUpdateParams) (int, error) {
@@ -3342,13 +2963,9 @@ func (s *NoteAttachmentScheduleRequestService) Get(ctx context.Context, monetary
 	return unmarshalObject[NoteAttachmentScheduleRequest](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentScheduleRequestService) List(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryID int, opts *ListOptions) (*ListResponse[NoteAttachmentScheduleRequest], error) {
+func (s *NoteAttachmentScheduleRequestService) List(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryID int, opts *ListOptions) iter.Seq2[NoteAttachmentScheduleRequest, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-request-inquiry/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), scheduleRequestInquiryID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentScheduleRequest](body, "NoteAttachment")
+	return listIter[NoteAttachmentScheduleRequest](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentScheduleRequestService) Update(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryID int, noteAttachmentID int, params NoteAttachmentScheduleRequestUpdateParams) (int, error) {
@@ -3385,13 +3002,9 @@ func (s *NoteTextScheduleRequestService) Get(ctx context.Context, monetaryAccoun
 	return unmarshalObject[NoteTextScheduleRequest](body, "NoteText")
 }
 
-func (s *NoteTextScheduleRequestService) List(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryID int, opts *ListOptions) (*ListResponse[NoteTextScheduleRequest], error) {
+func (s *NoteTextScheduleRequestService) List(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryID int, opts *ListOptions) iter.Seq2[NoteTextScheduleRequest, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/schedule-request-inquiry/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), scheduleRequestInquiryID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextScheduleRequest](body, "NoteText")
+	return listIter[NoteTextScheduleRequest](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextScheduleRequestService) Update(ctx context.Context, monetaryAccountID int, scheduleRequestInquiryID int, noteTextID int, params NoteTextScheduleRequestUpdateParams) (int, error) {
@@ -3428,13 +3041,9 @@ func (s *NoteAttachmentSofortMerchantTransactionService) Get(ctx context.Context
 	return unmarshalObject[NoteAttachmentSofortMerchantTransaction](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentSofortMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, sofortMerchantTransactionID int, opts *ListOptions) (*ListResponse[NoteAttachmentSofortMerchantTransaction], error) {
+func (s *NoteAttachmentSofortMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, sofortMerchantTransactionID int, opts *ListOptions) iter.Seq2[NoteAttachmentSofortMerchantTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/sofort-merchant-transaction/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), sofortMerchantTransactionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentSofortMerchantTransaction](body, "NoteAttachment")
+	return listIter[NoteAttachmentSofortMerchantTransaction](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentSofortMerchantTransactionService) Update(ctx context.Context, monetaryAccountID int, sofortMerchantTransactionID int, noteAttachmentID int, params NoteAttachmentSofortMerchantTransactionUpdateParams) (int, error) {
@@ -3471,13 +3080,9 @@ func (s *NoteTextSofortMerchantTransactionService) Get(ctx context.Context, mone
 	return unmarshalObject[NoteTextSofortMerchantTransaction](body, "NoteText")
 }
 
-func (s *NoteTextSofortMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, sofortMerchantTransactionID int, opts *ListOptions) (*ListResponse[NoteTextSofortMerchantTransaction], error) {
+func (s *NoteTextSofortMerchantTransactionService) List(ctx context.Context, monetaryAccountID int, sofortMerchantTransactionID int, opts *ListOptions) iter.Seq2[NoteTextSofortMerchantTransaction, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/sofort-merchant-transaction/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), sofortMerchantTransactionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextSofortMerchantTransaction](body, "NoteText")
+	return listIter[NoteTextSofortMerchantTransaction](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextSofortMerchantTransactionService) Update(ctx context.Context, monetaryAccountID int, sofortMerchantTransactionID int, noteTextID int, params NoteTextSofortMerchantTransactionUpdateParams) (int, error) {
@@ -3514,13 +3119,9 @@ func (s *NoteAttachmentWhitelistResultService) Get(ctx context.Context, monetary
 	return unmarshalObject[NoteAttachmentWhitelistResult](body, "NoteAttachment")
 }
 
-func (s *NoteAttachmentWhitelistResultService) List(ctx context.Context, monetaryAccountID int, whitelistID int, whitelistResultID int, opts *ListOptions) (*ListResponse[NoteAttachmentWhitelistResult], error) {
+func (s *NoteAttachmentWhitelistResultService) List(ctx context.Context, monetaryAccountID int, whitelistID int, whitelistResultID int, opts *ListOptions) iter.Seq2[NoteAttachmentWhitelistResult, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/whitelist/%d/whitelist-result/%d/note-attachment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), whitelistID, whitelistResultID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteAttachmentWhitelistResult](body, "NoteAttachment")
+	return listIter[NoteAttachmentWhitelistResult](s.client, ctx, path, "NoteAttachment", opts)
 }
 
 func (s *NoteAttachmentWhitelistResultService) Update(ctx context.Context, monetaryAccountID int, whitelistID int, whitelistResultID int, noteAttachmentID int, params NoteAttachmentWhitelistResultUpdateParams) (int, error) {
@@ -3557,13 +3158,9 @@ func (s *NoteTextWhitelistResultService) Get(ctx context.Context, monetaryAccoun
 	return unmarshalObject[NoteTextWhitelistResult](body, "NoteText")
 }
 
-func (s *NoteTextWhitelistResultService) List(ctx context.Context, monetaryAccountID int, whitelistID int, whitelistResultID int, opts *ListOptions) (*ListResponse[NoteTextWhitelistResult], error) {
+func (s *NoteTextWhitelistResultService) List(ctx context.Context, monetaryAccountID int, whitelistID int, whitelistResultID int, opts *ListOptions) iter.Seq2[NoteTextWhitelistResult, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/whitelist/%d/whitelist-result/%d/note-text", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), whitelistID, whitelistResultID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NoteTextWhitelistResult](body, "NoteText")
+	return listIter[NoteTextWhitelistResult](s.client, ctx, path, "NoteText", opts)
 }
 
 func (s *NoteTextWhitelistResultService) Update(ctx context.Context, monetaryAccountID int, whitelistID int, whitelistResultID int, noteTextID int, params NoteTextWhitelistResultUpdateParams) (int, error) {
@@ -3591,13 +3188,9 @@ func (s *NotificationFilterEmailService) Create(ctx context.Context, params Noti
 	return unmarshalObject[NotificationFilterEmail](body, "NotificationFilterEmail")
 }
 
-func (s *NotificationFilterEmailService) List(ctx context.Context, opts *ListOptions) (*ListResponse[NotificationFilterEmail], error) {
+func (s *NotificationFilterEmailService) List(ctx context.Context, opts *ListOptions) iter.Seq2[NotificationFilterEmail, error] {
 	path := fmt.Sprintf("user/%d/notification-filter-email", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NotificationFilterEmail](body, "NotificationFilterEmail")
+	return listIter[NotificationFilterEmail](s.client, ctx, path, "NotificationFilterEmail", opts)
 }
 
 type NotificationFilterFailureService struct{ *service }
@@ -3611,13 +3204,9 @@ func (s *NotificationFilterFailureService) Create(ctx context.Context, params No
 	return unmarshalID(body)
 }
 
-func (s *NotificationFilterFailureService) List(ctx context.Context, opts *ListOptions) (*ListResponse[NotificationFilterFailure], error) {
+func (s *NotificationFilterFailureService) List(ctx context.Context, opts *ListOptions) iter.Seq2[NotificationFilterFailure, error] {
 	path := fmt.Sprintf("user/%d/notification-filter-failure", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NotificationFilterFailure](body, "NotificationFilterFailure")
+	return listIter[NotificationFilterFailure](s.client, ctx, path, "NotificationFilterFailure", opts)
 }
 
 type NotificationFilterPushService struct{ *service }
@@ -3631,13 +3220,9 @@ func (s *NotificationFilterPushService) Create(ctx context.Context, params Notif
 	return unmarshalObject[NotificationFilterPush](body, "NotificationFilterPush")
 }
 
-func (s *NotificationFilterPushService) List(ctx context.Context, opts *ListOptions) (*ListResponse[NotificationFilterPush], error) {
+func (s *NotificationFilterPushService) List(ctx context.Context, opts *ListOptions) iter.Seq2[NotificationFilterPush, error] {
 	path := fmt.Sprintf("user/%d/notification-filter-push", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NotificationFilterPush](body, "NotificationFilterPush")
+	return listIter[NotificationFilterPush](s.client, ctx, path, "NotificationFilterPush", opts)
 }
 
 type NotificationFilterUrlService struct{ *service }
@@ -3651,13 +3236,9 @@ func (s *NotificationFilterUrlService) Create(ctx context.Context, params Notifi
 	return unmarshalID(body)
 }
 
-func (s *NotificationFilterUrlService) List(ctx context.Context, opts *ListOptions) (*ListResponse[NotificationFilterUrl], error) {
+func (s *NotificationFilterUrlService) List(ctx context.Context, opts *ListOptions) iter.Seq2[NotificationFilterUrl, error] {
 	path := fmt.Sprintf("user/%d/notification-filter-url", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NotificationFilterUrl](body, "NotificationFilterUrl")
+	return listIter[NotificationFilterUrl](s.client, ctx, path, "NotificationFilterUrl", opts)
 }
 
 type NotificationFilterUrlMonetaryAccountService struct{ *service }
@@ -3671,13 +3252,9 @@ func (s *NotificationFilterUrlMonetaryAccountService) Create(ctx context.Context
 	return unmarshalID(body)
 }
 
-func (s *NotificationFilterUrlMonetaryAccountService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[NotificationFilterUrlMonetaryAccount], error) {
+func (s *NotificationFilterUrlMonetaryAccountService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[NotificationFilterUrlMonetaryAccount, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/notification-filter-url", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[NotificationFilterUrlMonetaryAccount](body, "NotificationFilterUrl")
+	return listIter[NotificationFilterUrlMonetaryAccount](s.client, ctx, path, "NotificationFilterUrl", opts)
 }
 
 type UserService struct{ *service }
@@ -3691,13 +3268,9 @@ func (s *UserService) Get(ctx context.Context) (*User, error) {
 	return unmarshalObject[User](body, "User")
 }
 
-func (s *UserService) List(ctx context.Context, opts *ListOptions) (*ListResponse[User], error) {
+func (s *UserService) List(ctx context.Context, opts *ListOptions) iter.Seq2[User, error] {
 	path := "user"
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[User](body, "User")
+	return listIter[User](s.client, ctx, path, "User", opts)
 }
 
 type UserPersonService struct{ *service }
@@ -3751,13 +3324,9 @@ func (s *OauthCallbackUrlService) Get(ctx context.Context, oAuthClientID int, ca
 	return unmarshalObject[OauthCallbackUrl](body, "OauthCallbackUrl")
 }
 
-func (s *OauthCallbackUrlService) List(ctx context.Context, oAuthClientID int, opts *ListOptions) (*ListResponse[OauthCallbackUrl], error) {
+func (s *OauthCallbackUrlService) List(ctx context.Context, oAuthClientID int, opts *ListOptions) iter.Seq2[OauthCallbackUrl, error] {
 	path := fmt.Sprintf("user/%d/oauth-client/%d/callback-url", s.client.userID, oAuthClientID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[OauthCallbackUrl](body, "OauthCallbackUrl")
+	return listIter[OauthCallbackUrl](s.client, ctx, path, "OauthCallbackUrl", opts)
 }
 
 func (s *OauthCallbackUrlService) Update(ctx context.Context, oAuthClientID int, callbackURLID int, params OauthCallbackUrlUpdateParams) (int, error) {
@@ -3794,13 +3363,9 @@ func (s *OauthClientService) Get(ctx context.Context, oAuthClientID int) (*Oauth
 	return unmarshalObject[OauthClient](body, "OauthClient")
 }
 
-func (s *OauthClientService) List(ctx context.Context, opts *ListOptions) (*ListResponse[OauthClient], error) {
+func (s *OauthClientService) List(ctx context.Context, opts *ListOptions) iter.Seq2[OauthClient, error] {
 	path := fmt.Sprintf("user/%d/oauth-client", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[OauthClient](body, "OauthClient")
+	return listIter[OauthClient](s.client, ctx, path, "OauthClient", opts)
 }
 
 func (s *OauthClientService) Update(ctx context.Context, oAuthClientID int, params OauthClientUpdateParams) (int, error) {
@@ -3814,13 +3379,9 @@ func (s *OauthClientService) Update(ctx context.Context, oAuthClientID int, para
 
 type PaymentAutoAllocateDefinitionService struct{ *service }
 
-func (s *PaymentAutoAllocateDefinitionService) List(ctx context.Context, monetaryAccountID int, paymentAutoAllocateID int, opts *ListOptions) (*ListResponse[PaymentAutoAllocateDefinition], error) {
+func (s *PaymentAutoAllocateDefinitionService) List(ctx context.Context, monetaryAccountID int, paymentAutoAllocateID int, opts *ListOptions) iter.Seq2[PaymentAutoAllocateDefinition, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment-auto-allocate/%d/definition", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), paymentAutoAllocateID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[PaymentAutoAllocateDefinition](body, "PaymentAutoAllocateDefinition")
+	return listIter[PaymentAutoAllocateDefinition](s.client, ctx, path, "PaymentAutoAllocateDefinition", opts)
 }
 
 type PaymentAutoAllocateService struct{ *service }
@@ -3843,13 +3404,9 @@ func (s *PaymentAutoAllocateService) Get(ctx context.Context, monetaryAccountID 
 	return unmarshalObject[PaymentAutoAllocate](body, "PaymentAutoAllocate")
 }
 
-func (s *PaymentAutoAllocateService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[PaymentAutoAllocate], error) {
+func (s *PaymentAutoAllocateService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[PaymentAutoAllocate, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/payment-auto-allocate", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[PaymentAutoAllocate](body, "PaymentAutoAllocate")
+	return listIter[PaymentAutoAllocate](s.client, ctx, path, "PaymentAutoAllocate", opts)
 }
 
 func (s *PaymentAutoAllocateService) Update(ctx context.Context, monetaryAccountID int, paymentAutoAllocateID int, params PaymentAutoAllocateUpdateParams) (int, error) {
@@ -3868,13 +3425,9 @@ func (s *PaymentAutoAllocateService) Delete(ctx context.Context, monetaryAccount
 
 type PaymentAutoAllocateUserService struct{ *service }
 
-func (s *PaymentAutoAllocateUserService) List(ctx context.Context, opts *ListOptions) (*ListResponse[PaymentAutoAllocateUser], error) {
+func (s *PaymentAutoAllocateUserService) List(ctx context.Context, opts *ListOptions) iter.Seq2[PaymentAutoAllocateUser, error] {
 	path := fmt.Sprintf("user/%d/payment-auto-allocate", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[PaymentAutoAllocateUser](body, "PaymentAutoAllocate")
+	return listIter[PaymentAutoAllocateUser](s.client, ctx, path, "PaymentAutoAllocate", opts)
 }
 
 type PaymentServiceProviderCredentialService struct{ *service }
@@ -3917,13 +3470,9 @@ func (s *PaymentServiceProviderDraftPaymentService) Get(ctx context.Context, pay
 	return unmarshalObject[PaymentServiceProviderDraftPayment](body, "PaymentServiceProviderDraftPayment")
 }
 
-func (s *PaymentServiceProviderDraftPaymentService) List(ctx context.Context, opts *ListOptions) (*ListResponse[PaymentServiceProviderDraftPayment], error) {
+func (s *PaymentServiceProviderDraftPaymentService) List(ctx context.Context, opts *ListOptions) iter.Seq2[PaymentServiceProviderDraftPayment, error] {
 	path := fmt.Sprintf("user/%d/payment-service-provider-draft-payment", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[PaymentServiceProviderDraftPayment](body, "PaymentServiceProviderDraftPayment")
+	return listIter[PaymentServiceProviderDraftPayment](s.client, ctx, path, "PaymentServiceProviderDraftPayment", opts)
 }
 
 func (s *PaymentServiceProviderDraftPaymentService) Update(ctx context.Context, paymentServiceProviderDraftPaymentID int, params PaymentServiceProviderDraftPaymentUpdateParams) (int, error) {
@@ -3955,13 +3504,9 @@ func (s *PaymentServiceProviderIssuerTransactionService) Get(ctx context.Context
 	return unmarshalObject[PaymentServiceProviderIssuerTransaction](body, "PaymentServiceProviderIssuerTransaction")
 }
 
-func (s *PaymentServiceProviderIssuerTransactionService) List(ctx context.Context, opts *ListOptions) (*ListResponse[PaymentServiceProviderIssuerTransaction], error) {
+func (s *PaymentServiceProviderIssuerTransactionService) List(ctx context.Context, opts *ListOptions) iter.Seq2[PaymentServiceProviderIssuerTransaction, error] {
 	path := fmt.Sprintf("user/%d/payment-service-provider-issuer-transaction", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[PaymentServiceProviderIssuerTransaction](body, "PaymentServiceProviderIssuerTransaction")
+	return listIter[PaymentServiceProviderIssuerTransaction](s.client, ctx, path, "PaymentServiceProviderIssuerTransaction", opts)
 }
 
 func (s *PaymentServiceProviderIssuerTransactionService) Update(ctx context.Context, paymentServiceProviderIssuerTransactionID int, params PaymentServiceProviderIssuerTransactionUpdateParams) (int, error) {
@@ -3993,13 +3538,9 @@ func (s *PermittedIpService) Get(ctx context.Context, credentialPasswordIPID int
 	return unmarshalObject[PermittedIp](body, "PermittedIp")
 }
 
-func (s *PermittedIpService) List(ctx context.Context, credentialPasswordIPID int, opts *ListOptions) (*ListResponse[PermittedIp], error) {
+func (s *PermittedIpService) List(ctx context.Context, credentialPasswordIPID int, opts *ListOptions) iter.Seq2[PermittedIp, error] {
 	path := fmt.Sprintf("user/%d/credential-password-ip/%d/ip", s.client.userID, credentialPasswordIPID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[PermittedIp](body, "PermittedIp")
+	return listIter[PermittedIp](s.client, ctx, path, "PermittedIp", opts)
 }
 
 func (s *PermittedIpService) Update(ctx context.Context, credentialPasswordIPID int, ipID int, params PermittedIpUpdateParams) (int, error) {
@@ -4035,13 +3576,9 @@ func (s *SandboxUserPersonService) Create(ctx context.Context) (*SandboxUserPers
 
 type ScheduleUserService struct{ *service }
 
-func (s *ScheduleUserService) List(ctx context.Context, opts *ListOptions) (*ListResponse[ScheduleUser], error) {
+func (s *ScheduleUserService) List(ctx context.Context, opts *ListOptions) iter.Seq2[ScheduleUser, error] {
 	path := fmt.Sprintf("user/%d/schedule", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[ScheduleUser](body, "ScheduleUser")
+	return listIter[ScheduleUser](s.client, ctx, path, "ScheduleUser", opts)
 }
 
 type SessionService struct{ *service }
@@ -4093,13 +3630,9 @@ func (s *TransferwiseAccountQuoteService) Get(ctx context.Context, transferwiseQ
 	return unmarshalObject[TransferwiseAccountQuote](body, "TransferwiseRecipient")
 }
 
-func (s *TransferwiseAccountQuoteService) List(ctx context.Context, transferwiseQuoteID int, opts *ListOptions) (*ListResponse[TransferwiseAccountQuote], error) {
+func (s *TransferwiseAccountQuoteService) List(ctx context.Context, transferwiseQuoteID int, opts *ListOptions) iter.Seq2[TransferwiseAccountQuote, error] {
 	path := fmt.Sprintf("user/%d/transferwise-quote/%d/transferwise-recipient", s.client.userID, transferwiseQuoteID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[TransferwiseAccountQuote](body, "TransferwiseRecipient")
+	return listIter[TransferwiseAccountQuote](s.client, ctx, path, "TransferwiseRecipient", opts)
 }
 
 func (s *TransferwiseAccountQuoteService) Delete(ctx context.Context, transferwiseQuoteID int, transferwiseRecipientID int) error {
@@ -4118,24 +3651,16 @@ func (s *TransferwiseAccountRequirementService) Create(ctx context.Context, tran
 	return unmarshalID(body)
 }
 
-func (s *TransferwiseAccountRequirementService) List(ctx context.Context, transferwiseQuoteID int, opts *ListOptions) (*ListResponse[TransferwiseAccountRequirement], error) {
+func (s *TransferwiseAccountRequirementService) List(ctx context.Context, transferwiseQuoteID int, opts *ListOptions) iter.Seq2[TransferwiseAccountRequirement, error] {
 	path := fmt.Sprintf("user/%d/transferwise-quote/%d/transferwise-recipient-requirement", s.client.userID, transferwiseQuoteID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[TransferwiseAccountRequirement](body, "TransferwiseRequirement")
+	return listIter[TransferwiseAccountRequirement](s.client, ctx, path, "TransferwiseRequirement", opts)
 }
 
 type TransferwiseCurrencyService struct{ *service }
 
-func (s *TransferwiseCurrencyService) List(ctx context.Context, opts *ListOptions) (*ListResponse[TransferwiseCurrency], error) {
+func (s *TransferwiseCurrencyService) List(ctx context.Context, opts *ListOptions) iter.Seq2[TransferwiseCurrency, error] {
 	path := fmt.Sprintf("user/%d/transferwise-currency", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[TransferwiseCurrency](body, "TransferwiseCurrency")
+	return listIter[TransferwiseCurrency](s.client, ctx, path, "TransferwiseCurrency", opts)
 }
 
 type TransferwiseQuoteTemporaryService struct{ *service }
@@ -4180,35 +3705,23 @@ func (s *TransferwiseUserService) Create(ctx context.Context, params Transferwis
 	return unmarshalID(body)
 }
 
-func (s *TransferwiseUserService) List(ctx context.Context, opts *ListOptions) (*ListResponse[TransferwiseUser], error) {
+func (s *TransferwiseUserService) List(ctx context.Context, opts *ListOptions) iter.Seq2[TransferwiseUser, error] {
 	path := fmt.Sprintf("user/%d/transferwise-user", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[TransferwiseUser](body, "TransferwiseUser")
+	return listIter[TransferwiseUser](s.client, ctx, path, "TransferwiseUser", opts)
 }
 
 type TreeProgressService struct{ *service }
 
-func (s *TreeProgressService) List(ctx context.Context, opts *ListOptions) (*ListResponse[TreeProgress], error) {
+func (s *TreeProgressService) List(ctx context.Context, opts *ListOptions) iter.Seq2[TreeProgress, error] {
 	path := fmt.Sprintf("user/%d/tree-progress", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[TreeProgress](body, "TreeProgress")
+	return listIter[TreeProgress](s.client, ctx, path, "TreeProgress", opts)
 }
 
 type UserCompanyNameService struct{ *service }
 
-func (s *UserCompanyNameService) List(ctx context.Context, userCompanyID int, opts *ListOptions) (*ListResponse[UserCompanyName], error) {
+func (s *UserCompanyNameService) List(ctx context.Context, userCompanyID int, opts *ListOptions) iter.Seq2[UserCompanyName, error] {
 	path := fmt.Sprintf("user-company/%d/name", userCompanyID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[UserCompanyName](body, "UserCompanyNameArray")
+	return listIter[UserCompanyName](s.client, ctx, path, "UserCompanyNameArray", opts)
 }
 
 type UserCredentialPasswordIpService struct{ *service }
@@ -4222,24 +3735,16 @@ func (s *UserCredentialPasswordIpService) Get(ctx context.Context, credentialPas
 	return unmarshalObject[UserCredentialPasswordIp](body, "CredentialPasswordIp")
 }
 
-func (s *UserCredentialPasswordIpService) List(ctx context.Context, opts *ListOptions) (*ListResponse[UserCredentialPasswordIp], error) {
+func (s *UserCredentialPasswordIpService) List(ctx context.Context, opts *ListOptions) iter.Seq2[UserCredentialPasswordIp, error] {
 	path := fmt.Sprintf("user/%d/credential-password-ip", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[UserCredentialPasswordIp](body, "CredentialPasswordIp")
+	return listIter[UserCredentialPasswordIp](s.client, ctx, path, "CredentialPasswordIp", opts)
 }
 
 type UserLegalNameService struct{ *service }
 
-func (s *UserLegalNameService) List(ctx context.Context, opts *ListOptions) (*ListResponse[UserLegalName], error) {
+func (s *UserLegalNameService) List(ctx context.Context, opts *ListOptions) iter.Seq2[UserLegalName, error] {
 	path := fmt.Sprintf("user/%d/legal-name", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[UserLegalName](body, "UserLegalNameArray")
+	return listIter[UserLegalName](s.client, ctx, path, "UserLegalNameArray", opts)
 }
 
 type WhitelistSddOneOffService struct{ *service }
@@ -4262,13 +3767,9 @@ func (s *WhitelistSddOneOffService) Get(ctx context.Context, whitelistSDDOneOffI
 	return unmarshalObject[WhitelistSddOneOff](body, "WhitelistSddOneOff")
 }
 
-func (s *WhitelistSddOneOffService) List(ctx context.Context, opts *ListOptions) (*ListResponse[WhitelistSddOneOff], error) {
+func (s *WhitelistSddOneOffService) List(ctx context.Context, opts *ListOptions) iter.Seq2[WhitelistSddOneOff, error] {
 	path := fmt.Sprintf("user/%d/whitelist-sdd-one-off", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[WhitelistSddOneOff](body, "WhitelistSddOneOff")
+	return listIter[WhitelistSddOneOff](s.client, ctx, path, "WhitelistSddOneOff", opts)
 }
 
 func (s *WhitelistSddOneOffService) Update(ctx context.Context, whitelistSDDOneOffID int, params WhitelistSddOneOffUpdateParams) (int, error) {
@@ -4305,13 +3806,9 @@ func (s *WhitelistSddRecurringService) Get(ctx context.Context, whitelistSDDRecu
 	return unmarshalObject[WhitelistSddRecurring](body, "WhitelistSddRecurring")
 }
 
-func (s *WhitelistSddRecurringService) List(ctx context.Context, opts *ListOptions) (*ListResponse[WhitelistSddRecurring], error) {
+func (s *WhitelistSddRecurringService) List(ctx context.Context, opts *ListOptions) iter.Seq2[WhitelistSddRecurring, error] {
 	path := fmt.Sprintf("user/%d/whitelist-sdd-recurring", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[WhitelistSddRecurring](body, "WhitelistSddRecurring")
+	return listIter[WhitelistSddRecurring](s.client, ctx, path, "WhitelistSddRecurring", opts)
 }
 
 func (s *WhitelistSddRecurringService) Update(ctx context.Context, whitelistSDDRecurringID int, params WhitelistSddRecurringUpdateParams) (int, error) {
@@ -4339,13 +3836,9 @@ func (s *WhitelistSddService) Get(ctx context.Context, whitelistSDDID int) (*Whi
 	return unmarshalObject[WhitelistSdd](body, "Whitelist")
 }
 
-func (s *WhitelistSddService) List(ctx context.Context, opts *ListOptions) (*ListResponse[WhitelistSdd], error) {
+func (s *WhitelistSddService) List(ctx context.Context, opts *ListOptions) iter.Seq2[WhitelistSdd, error] {
 	path := fmt.Sprintf("user/%d/whitelist-sdd", s.client.userID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[WhitelistSdd](body, "Whitelist")
+	return listIter[WhitelistSdd](s.client, ctx, path, "Whitelist", opts)
 }
 
 type WhitelistSddMonetaryAccountPayingService struct{ *service }
@@ -4359,24 +3852,16 @@ func (s *WhitelistSddMonetaryAccountPayingService) Get(ctx context.Context, mone
 	return unmarshalObject[WhitelistSddMonetaryAccountPaying](body, "WhitelistSdd")
 }
 
-func (s *WhitelistSddMonetaryAccountPayingService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) (*ListResponse[WhitelistSddMonetaryAccountPaying], error) {
+func (s *WhitelistSddMonetaryAccountPayingService) List(ctx context.Context, monetaryAccountID int, opts *ListOptions) iter.Seq2[WhitelistSddMonetaryAccountPaying, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/whitelist-sdd", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID))
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[WhitelistSddMonetaryAccountPaying](body, "WhitelistSdd")
+	return listIter[WhitelistSddMonetaryAccountPaying](s.client, ctx, path, "WhitelistSdd", opts)
 }
 
 type MasterCardPaymentService struct{ *service }
 
-func (s *MasterCardPaymentService) List(ctx context.Context, monetaryAccountID int, mastercardActionID int, opts *ListOptions) (*ListResponse[MasterCardPayment], error) {
+func (s *MasterCardPaymentService) List(ctx context.Context, monetaryAccountID int, mastercardActionID int, opts *ListOptions) iter.Seq2[MasterCardPayment, error] {
 	path := fmt.Sprintf("user/%d/monetary-account/%d/mastercard-action/%d/payment", s.client.userID, s.client.resolveMonetaryAccountID(monetaryAccountID), mastercardActionID)
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[MasterCardPayment](body, "Payment")
+	return listIter[MasterCardPayment](s.client, ctx, path, "Payment", opts)
 }
 
 type MasterCardIdentityCheckChallengeRequestUserService struct{ *service }
@@ -4401,13 +3886,9 @@ func (s *MasterCardIdentityCheckChallengeRequestUserService) Update(ctx context.
 
 type HealthCheckService struct{ *service }
 
-func (s *HealthCheckService) List(ctx context.Context, opts *ListOptions) (*ListResponse[HealthCheck], error) {
+func (s *HealthCheckService) List(ctx context.Context, opts *ListOptions) iter.Seq2[HealthCheck, error] {
 	path := "health-check"
-	body, _, err := s.client.get(ctx, path, opts.toParams())
-	if err != nil {
-		return nil, err
-	}
-	return unmarshalList[HealthCheck](body, "HealthCheckResult")
+	return listIter[HealthCheck](s.client, ctx, path, "HealthCheckResult", opts)
 }
 
 // ServiceContainer holds all generated service accessors.
