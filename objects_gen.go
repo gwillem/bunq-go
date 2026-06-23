@@ -203,7 +203,7 @@ type DraftPaymentEntry struct {
 	ID int `json:"id,omitempty"`
 	Amount *Amount `json:"amount,omitempty"`
 	Alias *LabelMonetaryAccount `json:"alias,omitempty"`
-	CounterpartyAlias *LabelMonetaryAccount `json:"counterparty_alias,omitempty"`
+	CounterpartyAlias *Pointer `json:"counterparty_alias,omitempty"`
 	Description string `json:"description,omitempty"`
 	MerchantReference string `json:"merchant_reference,omitempty"`
 	Type string `json:"type,omitempty"`
